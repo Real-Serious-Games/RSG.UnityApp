@@ -48,6 +48,8 @@ namespace RSG.Unity
         {
             var logger = new UnityLogger();
             var factory = new Factory.Factory("App", logger);
+            factory.Dep<ILogger>(logger);
+
             var reflection = new Reflection();
 
             //todo: all this code should merge into RSG.Factory.
