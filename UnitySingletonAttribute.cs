@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Core.Unity
+namespace RSG.Unity
 {
     /// <summary>
     /// Attribute the defines a 'Unity Singleton', a MonoBehavior that is procedurally added to the scene and setup for dependency injection.

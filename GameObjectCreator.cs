@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Core.Unity
+namespace RSG.Unity
 {
     /// <summary>
     /// Interface for procedural creation and management of game objects.
