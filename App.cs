@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace RSG.Unity
 {
@@ -29,6 +30,11 @@ namespace RSG.Unity
     public class App : IApp
     {
         /// <summary>
+        /// Name of the game object automatically added to the scene that handles events on behalf of the app.
+        /// </summary>
+        public static readonly string AppHubObjectName = "_AppHub";
+
+        /// <summary>
         /// Accessor for the singleton app instance.
         /// </summary>
         public static IApp Instance { get; private set; }
@@ -50,6 +56,23 @@ namespace RSG.Unity
             var factory = new Factory.Factory("App", logger);
             factory.Dep<ILogger>(logger);
 
+            var singletonManager = InitFactory(logger, factory);
+
+            this.Factory = factory;
+            this.Logger = logger;
+
+            singletonManager.InstantiateSingletons(factory);
+            singletonManager.Start();
+
+            var appHub = InitAppHub();
+            appHub.Shutdown = () => singletonManager.Shutdown();
+        }
+
+        /// <summary>
+        /// Helper function to initalize the factory.
+        /// </summary>
+        private static SingletonManager InitFactory(UnityLogger logger, RSG.Factory.Factory factory)
+        {
             var reflection = new Reflection();
 
             //todo: all this code should merge into RSG.Factory.
@@ -62,9 +85,27 @@ namespace RSG.Unity
 
             var singletonScanner = new SingletonScanner(reflection, logger, singletonManager);
             singletonScanner.ScanSingletonTypes();
+            return singletonManager;
+        }
 
-            this.Factory = factory;
-            this.Logger = logger;
+        /// <summary>
+        /// Helper function to initalize the app hub.
+        /// </summary>
+        private static AppHub InitAppHub()
+        {
+            var appHubGO = GameObject.Find(AppHubObjectName);
+            if (appHubGO == null)
+            {
+                appHubGO = new GameObject(AppHubObjectName);
+                GameObject.DontDestroyOnLoad(appHubGO);
+            }
+
+            var appHub = appHubGO.GetComponent<AppHub>();
+            if (appHub == null)
+            {
+                appHub = appHubGO.AddComponent<AppHub>();
+            }
+            return appHub;
         }
 
         /// <summary>
