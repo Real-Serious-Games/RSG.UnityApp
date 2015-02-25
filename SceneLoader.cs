@@ -1,5 +1,5 @@
 ﻿using RSG.Factory;
-using RSG.Promise;
+using RSG.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -55,17 +55,17 @@ namespace RSG.Unity
         /// <summary>
         /// Load a scene asynchronously.
         /// </summary>
-        IPromise LoadAsync(string sceneName);
+        Promise.IPromise LoadAsync(string sceneName);
 
         /// <summary>
         /// Load a scene asynchronously and merge it to the current scene.
         /// </summary>
-        IPromise LoadAsyncAdditive(string sceneName);
+        Promise.IPromise LoadAsyncAdditive(string sceneName);
 
         /// <summary>
         /// Resolves the promise when the current scene has completed.
         /// </summary>
-        IPromise WaitUntilCurrentSceneCompleted();
+        Promise.IPromise WaitUntilCurrentSceneCompleted();
 
         /// <summary>
         /// Notify that the current scene has complete. 
@@ -122,6 +122,9 @@ namespace RSG.Unity
         /// </summary>
         private Promise.Promise sceneCompletedPromise;
 
+        [Dependency]
+        public ILogger Logger { get; set; }
+
         /// <summary>
         /// The name of the level currently scene.
         /// </summary>
@@ -162,7 +165,7 @@ namespace RSG.Unity
         /// <summary>
         /// Load a scene asynchronously.
         /// </summary>
-        public IPromise LoadAsync(string sceneName)
+        public Promise.IPromise LoadAsync(string sceneName)
         {
             Argument.StringNotNullOrEmpty(() => sceneName);
 
@@ -176,7 +179,7 @@ namespace RSG.Unity
         /// <summary>
         /// Load a scene asynchronously and merge it to the current scene.
         /// </summary>
-        public IPromise LoadAsyncAdditive(string sceneName)
+        public Promise.IPromise LoadAsyncAdditive(string sceneName)
         {
             Argument.StringNotNullOrEmpty(() => sceneName);
 
@@ -190,7 +193,7 @@ namespace RSG.Unity
         /// <summary>
         /// Resolves the promise when the current scene has completed.
         /// </summary>
-        public IPromise WaitUntilCurrentSceneCompleted()
+        public Promise.IPromise WaitUntilCurrentSceneCompleted()
         {
             if (sceneCompletedPromise == null)
             {
@@ -243,6 +246,8 @@ namespace RSG.Unity
         /// </summary>
         private void NotifySceneLoaded(string sceneName)
         {
+            Logger.LogInfo("Scene Loaded: " + sceneName);
+
             if (SceneLoaded != null)
             {
                 SceneLoaded(this, new SceneLoadEventArgs(sceneName));
@@ -255,6 +260,8 @@ namespace RSG.Unity
         private void StartLoading(string sceneName, string loadType)
         {
             ExceptionIfLoading(sceneName);
+
+            Logger.LogInfo("Loading scene (" + loadType + "): " + CurrentSceneName + " -> " + sceneName);
 
             IsLoading = true;
             LoadingSceneName = sceneName;
