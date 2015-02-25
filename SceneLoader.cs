@@ -1,4 +1,5 @@
-﻿using RSG.Promise;
+﻿using RSG.Factory;
+using RSG.Promise;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -85,6 +86,7 @@ namespace RSG.Unity
     /// <summary>
     /// Wrapper for Unity scene loading.
     /// </summary>
+    [LazySingleton(typeof(ISceneLoader))]
     public class SceneLoader : ISceneLoader
     {
         //
