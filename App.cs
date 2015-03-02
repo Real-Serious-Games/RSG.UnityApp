@@ -53,16 +53,17 @@ namespace RSG.Unity
         public App()
         {
             var logger = new UnityLogger();
-            var factory = new Factory.Factory("App", logger);
+            var reflection = new Reflection();
+            var factory = new Factory.Factory("App", logger, reflection);
             factory.Dep<ILogger>(logger);
 
-            var singletonManager = InitFactory(logger, factory);
+            var singletonManager = InitFactory(logger, factory, reflection);
 
             this.Factory = factory;
             this.Logger = logger;
 
             singletonManager.InstantiateSingletons(factory);
-            singletonManager.Start();
+            singletonManager.Startup();
 
             var appHub = InitAppHub();
             appHub.Shutdown = () => singletonManager.Shutdown();
@@ -71,12 +72,10 @@ namespace RSG.Unity
         /// <summary>
         /// Helper function to initalize the factory.
         /// </summary>
-        private static SingletonManager InitFactory(UnityLogger logger, RSG.Factory.Factory factory)
-        {
-            var reflection = new Reflection();
-
+        private static SingletonManager InitFactory(UnityLogger logger, RSG.Factory.Factory factory, IReflection reflection)
+        {           
             //todo: all this code should merge into RSG.Factory.
-            factory.AutoRegisterTypes(reflection);
+            factory.AutoRegisterTypes();
 
             var singletonManager = new SingletonManager(reflection, logger, factory);
 

@@ -154,7 +154,7 @@ namespace RSG.Unity
             return parent;
         }
 
-        public void Start()
+        public void Startup()
         {
         }
 
