@@ -35,9 +35,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\RSG.Factory.1.0.0.8\lib\net35\RSG.Factory.dll</HintPath>
     </Reference>
-    <Reference Include="RSG.Promise, Version=1.1.0.3, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="RSG.Promise, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\RSG.Promise.1.1.0.3\lib\net35\RSG.Promise.dll</HintPath>
+      <HintPath>packages\RSG.Promise.1.1.1.0\lib\net35\RSG.Promise.dll</HintPath>
     </Reference>
     <Reference Include="RSG.Toolkit">
       <HintPath>packages\RSG.Toolkit.1.0.0.0\lib\net35\RSG.Toolkit.dll</HintPath>

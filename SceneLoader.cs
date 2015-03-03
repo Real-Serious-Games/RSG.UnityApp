@@ -55,17 +55,17 @@ namespace RSG.Unity
         /// <summary>
         /// Load a scene asynchronously.
         /// </summary>
-        Promise.IPromise LoadAsync(string sceneName);
+        IPromise LoadAsync(string sceneName);
 
         /// <summary>
         /// Load a scene asynchronously and merge it to the current scene.
         /// </summary>
-        Promise.IPromise LoadAsyncAdditive(string sceneName);
+        IPromise LoadAsyncAdditive(string sceneName);
 
         /// <summary>
         /// Resolves the promise when the current scene has completed.
         /// </summary>
-        Promise.IPromise WaitUntilCurrentSceneCompleted();
+        IPromise WaitUntilCurrentSceneCompleted();
 
         /// <summary>
         /// Notify that the current scene has complete. 
@@ -120,7 +120,7 @@ namespace RSG.Unity
         /// <summary>
         /// Promise that is resolved when the current scene completes.
         /// </summary>
-        private Promise.Promise sceneCompletedPromise;
+        private Promise sceneCompletedPromise;
 
         [Dependency]
         public ILogger Logger { get; set; }
@@ -165,13 +165,13 @@ namespace RSG.Unity
         /// <summary>
         /// Load a scene asynchronously.
         /// </summary>
-        public Promise.IPromise LoadAsync(string sceneName)
+        public IPromise LoadAsync(string sceneName)
         {
             Argument.StringNotNullOrEmpty(() => sceneName);
 
             CreateSceneLoadedEventHandler();
 
-            var promise = new Promise.Promise();
+            var promise = new Promise();
             sceneLoadedEventHandler.StartCoroutine(LoadAsyncCoroutine(sceneName, () => promise.Resolve()));
             return promise;
         }
@@ -179,13 +179,13 @@ namespace RSG.Unity
         /// <summary>
         /// Load a scene asynchronously and merge it to the current scene.
         /// </summary>
-        public Promise.IPromise LoadAsyncAdditive(string sceneName)
+        public IPromise LoadAsyncAdditive(string sceneName)
         {
             Argument.StringNotNullOrEmpty(() => sceneName);
 
             CreateSceneLoadedEventHandler();
 
-            var promise = new Promise.Promise();
+            var promise = new Promise();
             sceneLoadedEventHandler.StartCoroutine(LoadAsyncAdditiveCoroutine(sceneName, () => promise.Resolve()));
             return promise;
         }
@@ -193,11 +193,11 @@ namespace RSG.Unity
         /// <summary>
         /// Resolves the promise when the current scene has completed.
         /// </summary>
-        public Promise.IPromise WaitUntilCurrentSceneCompleted()
+        public IPromise WaitUntilCurrentSceneCompleted()
         {
             if (sceneCompletedPromise == null)
             {
-                sceneCompletedPromise = new Promise.Promise();
+                sceneCompletedPromise = new Promise();
             }
 
             return sceneCompletedPromise;
