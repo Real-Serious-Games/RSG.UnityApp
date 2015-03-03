@@ -1,4 +1,4 @@
-﻿using RSG.Factory;
+﻿using RSG;
 using RSG.Utils;
 using System;
 using System.Collections.Generic;
@@ -54,7 +54,7 @@ namespace RSG.Unity
         {
             var logger = new UnityLogger();
             var reflection = new Reflection();
-            var factory = new Factory.Factory("App", logger, reflection);
+            var factory = new Factory("App", logger, reflection);
             factory.Dep<ILogger>(logger);
 
             var singletonManager = InitFactory(logger, factory, reflection);
@@ -72,7 +72,7 @@ namespace RSG.Unity
         /// <summary>
         /// Helper function to initalize the factory.
         /// </summary>
-        private static SingletonManager InitFactory(UnityLogger logger, RSG.Factory.Factory factory, IReflection reflection)
+        private static SingletonManager InitFactory(UnityLogger logger, RSG.Factory factory, IReflection reflection)
         {           
             //todo: all this code should merge into RSG.Factory.
             factory.AutoRegisterTypes();
