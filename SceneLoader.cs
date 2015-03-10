@@ -208,8 +208,11 @@ namespace RSG.Unity
         /// </summary>
         public void NotifyCurrentSceneCompleted()
         {
-            sceneCompletedPromise.Resolve();
-            sceneCompletedPromise = null;
+            if (sceneCompletedPromise != null)
+            {
+                sceneCompletedPromise.Resolve();
+                sceneCompletedPromise = null;
+            }
         }
 
         /// <summary>
