@@ -11,17 +11,6 @@ using UnityEngine;
 namespace RSG
 {
     /// <summary>
-    /// Extension to configure SErilog to write to Unity sink.
-    /// </summary>
-    public static class SerilogUnitySinkExt
-    {
-        public static LoggerConfiguration UnityLog(this LoggerSinkConfiguration config)
-        {
-            return config.Sink<SerilogUnitySink>();
-        }
-    }
-
-    /// <summary>
     /// Serilog sink that writes to Unity log.
     /// </summary>
     [SerilogSink]
