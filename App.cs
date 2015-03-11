@@ -40,6 +40,9 @@ namespace RSG
         /// </summary>
         public static IApp Instance { get; private set; }
 
+        /// <summary>
+        /// Initialize the app. Can be called multiple times.
+        /// </summary>
         public static void Init()
         {
             if (Instance != null)
@@ -49,6 +52,18 @@ namespace RSG
             }
 
             Instance = new App();
+        }
+
+        /// <summary>
+        /// Resolve dependencies on a specific object, first ensuring that the application has been initialized.
+        /// </summary>
+        public static void ResolveDependencies(object obj)
+        {
+            Argument.NotNull(() => obj);
+
+            Init();
+
+            Instance.Factory.ResolveDependencies(obj);
         }
 
         public App()
