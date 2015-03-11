@@ -1,12 +1,11 @@
-﻿using RSG;
-using RSG.Utils;
+﻿using RSG.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace RSG.Unity
+namespace RSG
 {
     /// <summary>
     /// Interface for procedural creation and management of game objects.

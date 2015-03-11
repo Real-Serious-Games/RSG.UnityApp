@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace RSG.Unity
+namespace RSG
 {
     /// <summary>
     /// Args for the SceneLoaded event.

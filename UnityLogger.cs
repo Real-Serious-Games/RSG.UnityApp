@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace RSG.Unity
+namespace RSG
 {
     /// <summary>
     /// A logger implementation that logs to the Unity log.

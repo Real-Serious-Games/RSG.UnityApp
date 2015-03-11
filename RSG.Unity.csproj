@@ -7,7 +7,7 @@
     <ProjectGuid>{D33A6F6D-49C7-4CE2-A2A9-0BCDBBBB12EA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RSG.Unity</RootNamespace>
+    <RootNamespace>RSG</RootNamespace>
     <AssemblyName>RSG.Unity</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -42,6 +42,12 @@
     <Reference Include="RSG.Toolkit">
       <HintPath>packages\RSG.Toolkit.1.0.0.0\lib\net35\RSG.Toolkit.dll</HintPath>
     </Reference>
+    <Reference Include="Serilog">
+      <HintPath>dlls\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.FullNetFx">
+      <HintPath>dlls\Serilog.FullNetFx.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -56,9 +62,15 @@
     <Compile Include="App.cs" />
     <Compile Include="AppHub.cs" />
     <Compile Include="AppInit.cs" />
+    <Compile Include="FormattedException.cs" />
     <Compile Include="GameObjectCreator.cs" />
+    <Compile Include="MultiLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RSGLogEnricher.cs" />
     <Compile Include="SceneLoader.cs" />
+    <Compile Include="SerilogLogger.cs" />
+    <Compile Include="SerilogSinkAttribute.cs" />
+    <Compile Include="SerilogUnitySink.cs" />
     <Compile Include="UnityLogger.cs" />
     <Compile Include="UnitySingletonAttribute.cs" />
   </ItemGroup>

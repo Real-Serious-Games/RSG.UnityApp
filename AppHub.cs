@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace RSG.Unity
+namespace RSG
 {
     /// <summary>
     /// Hub of the app, notifies important events.

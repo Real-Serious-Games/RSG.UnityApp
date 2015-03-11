@@ -1,12 +1,11 @@
-﻿using RSG;
-using RSG.Utils;
+﻿using RSG.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace RSG.Unity
+namespace RSG
 {
     /// <summary>
     /// Attribute the defines a 'Unity Singleton', a MonoBehavior that is procedurally added to the scene and setup for dependency injection.
