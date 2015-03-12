@@ -92,6 +92,9 @@ namespace RSG
 
             var appHub = InitAppHub();
             appHub.Shutdown = () => singletonManager.Shutdown();
+
+            // Initialize errors for unhandled promises.
+            Promise.UnhandledException += (s, e) => logger.LogError(e.Exception, "Unhandled error from promise.");
         }
 
         /// <summary>
