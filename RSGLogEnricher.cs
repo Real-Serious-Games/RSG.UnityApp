@@ -13,16 +13,11 @@ namespace RSG
     /// </summary>
     public class RSGLogEnricher : ILogEventEnricher
     {
-        /// <summary>
-        /// Instance ID for the application. Used to differentuate logs from different runs of the app.
-        /// </summary>
-        public static readonly string AppInstanceID = Guid.NewGuid().ToString();
-
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
             logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("UserName", Environment.UserName));
             logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("MachineName", Environment.MachineName));
-            logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("AppInstanceID", AppInstanceID));
+            logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("AppInstanceID", App.AppInstanceID));
 
         }
     }
