@@ -132,10 +132,10 @@ namespace RSG
                 reportLogger.LogInfo("    particleRaycastBudget: {particleRaycastBudget}", QualitySettings.particleRaycastBudget);
                 reportLogger.LogInfo("    pixelLightCount: {pixelLightCount}", QualitySettings.pixelLightCount);
                 reportLogger.LogInfo("    shadowCascades: {shadowCascades}", QualitySettings.shadowCascades);
-                reportLogger.LogInfo("    shadowDistance: {desiredColorSpace}", QualitySettings.desiredColorSpace);
-                reportLogger.LogInfo("    shadowProjection: {desiredColorSpace}", QualitySettings.desiredColorSpace);
-                reportLogger.LogInfo("    softVegetation: {desiredColorSpace}", QualitySettings.desiredColorSpace);
-                reportLogger.LogInfo("    vSyncCount: {desiredColorSpace}", QualitySettings.desiredColorSpace);
+                reportLogger.LogInfo("    shadowDistance: {shadowDistance}", QualitySettings.shadowDistance);
+                reportLogger.LogInfo("    shadowProjection: {shadowProjection}", QualitySettings.shadowProjection);
+                reportLogger.LogInfo("    softVegetation: {softVegetation}", QualitySettings.softVegetation);
+                reportLogger.LogInfo("    vSyncCount: {vSyncCount}", QualitySettings.vSyncCount);
                 reportLogger.LogInfo("Screen");
                 reportLogger.LogInfo("    currentResolution: {resolutionX} x {resolutionY}", Screen.currentResolution.width, Screen.currentResolution.height);
                 reportLogger.LogInfo("    refreshRate: {refreshRate} hz", Screen.currentResolution.refreshRate);
