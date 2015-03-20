@@ -18,17 +18,19 @@ namespace RSG
     {
         public void Emit(LogEvent logEvent)
         {
-            if (logEvent.Level == LogEventLevel.Debug || logEvent.Level == LogEventLevel.Information)
+            var msg = "[RSG]: " + logEvent.RenderMessage();
+
+            if (logEvent.Level == LogEventLevel.Error || logEvent.Level == LogEventLevel.Fatal)
             {
-                Debug.Log(logEvent.RenderMessage());
-            }
-            else if (logEvent.Level == LogEventLevel.Error || logEvent.Level == LogEventLevel.Fatal)
-            {
-                Debug.LogError(logEvent.RenderMessage());
+                Debug.LogError(msg);
             }
             else if (logEvent.Level == LogEventLevel.Warning)
             {
-                Debug.LogWarning(logEvent.RenderMessage());
+                Debug.LogWarning(msg);
+            }
+            else
+            {
+                Debug.Log(msg);
             }
         }            
     }
