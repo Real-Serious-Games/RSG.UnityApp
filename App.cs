@@ -164,6 +164,22 @@ namespace RSG
 
             // Initialize errors for unhandled promises.
             Promise.UnhandledException += (s, e) => logger.LogError(e.Exception, "Unhandled error from promise.");
+
+            Application.RegisterLogCallbackThreaded((msg, stackTrace, type) =>
+            {
+                if (!msg.StartsWith(SerilogUnitySink.RSGLogTag))
+                {
+                    switch (type)
+                    {
+                        case LogType.Assert:        
+                        case LogType.Error:
+                        case LogType.Exception:     logger.LogError(msg + "\r\nStack:\r\n{StackTrace}", stackTrace); break;
+                        case LogType.Warning:       logger.LogWarning(msg + "\r\nStack:\r\n{StackTrace}", stackTrace); break;
+                        default:                    logger.LogInfo(msg + "\r\nStack:\r\n{StackTrace}", stackTrace); break;
+                    }
+                }
+                                    
+            });
         }
 
         /// <summary>

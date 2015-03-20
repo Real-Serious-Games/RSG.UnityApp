@@ -16,9 +16,14 @@ namespace RSG
     [SerilogSink]
     internal class SerilogUnitySink : ILogEventSink
     {
+        /// <summary>
+        /// A tag that identifies RSG log messages that have been passed to Unity.
+        /// </summary>
+        public static readonly string RSGLogTag = "[RSG]: ";
+
         public void Emit(LogEvent logEvent)
         {
-            var msg = "[RSG]: " + logEvent.RenderMessage();
+            var msg = RSGLogTag + logEvent.RenderMessage();
 
             if (logEvent.Level == LogEventLevel.Error || logEvent.Level == LogEventLevel.Fatal)
             {
