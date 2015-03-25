@@ -68,6 +68,7 @@
     <Compile Include="App.cs" />
     <Compile Include="AppHub.cs" />
     <Compile Include="AppInit.cs" />
+    <Compile Include="SettingsLoader.cs" />
     <Compile Include="FormattedException.cs" />
     <Compile Include="GameObjectCreator.cs" />
     <Compile Include="LogSystemInfo.cs" />
