@@ -7,6 +7,7 @@ using UnityEngine;
 using Serilog;
 using Serilog.Events;
 using System.IO;
+using RSG.Scene.Query;
 
 namespace RSG
 {
@@ -150,6 +151,8 @@ namespace RSG
 
             var factory = new Factory("App", logger, reflection);
             factory.Dep<RSG.Utils.ILogger>(logger);
+            factory.Dep<ISceneQuery>(new SceneQuery());
+            factory.Dep<ISceneTraversal>(new SceneTraversal());
 
             var singletonManager = InitFactory(logger, factory, reflection);
 
