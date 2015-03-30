@@ -71,6 +71,7 @@
     <Compile Include="SettingsLoader.cs" />
     <Compile Include="FormattedException.cs" />
     <Compile Include="GameObjectCreator.cs" />
+    <Compile Include="IUpdatable.cs" />
     <Compile Include="LogSystemInfo.cs" />
     <Compile Include="MultiLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="SerilogLogger.cs" />
     <Compile Include="SerilogSinkAttribute.cs" />
     <Compile Include="SerilogUnitySink.cs" />
+    <Compile Include="TaskManager.cs" />
     <Compile Include="UnityLogger.cs" />
     <Compile Include="UnitySingletonAttribute.cs" />
   </ItemGroup>

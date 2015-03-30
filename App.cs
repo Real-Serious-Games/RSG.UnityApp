@@ -68,11 +68,6 @@ namespace RSG
         private static readonly string SystemReportsPath = "System";
 
         /// <summary>
-        /// Name of the game object automatically added to the scene that handles events on behalf of the app.
-        /// </summary>
-        public static readonly string AppHubObjectName = "_AppHub";
-
-        /// <summary>
         /// Accessor for the singleton app instance.
         /// </summary>
         public static IApp Instance { get; private set; }
@@ -162,7 +157,7 @@ namespace RSG
             singletonManager.InstantiateSingletons(factory);
             singletonManager.Startup();
 
-            var appHub = InitAppHub();
+            var appHub = factory.ResolveDep<IAppHub>();
             appHub.Shutdown = () => singletonManager.Shutdown();
 
             // Initialize errors for unhandled promises.
@@ -239,26 +234,6 @@ namespace RSG
             var singletonScanner = new SingletonScanner(reflection, logger, singletonManager);
             singletonScanner.ScanSingletonTypes();
             return singletonManager;
-        }
-
-        /// <summary>
-        /// Helper function to initalize the app hub.
-        /// </summary>
-        private static AppHub InitAppHub()
-        {
-            var appHubGO = GameObject.Find(AppHubObjectName);
-            if (appHubGO == null)
-            {
-                appHubGO = new GameObject(AppHubObjectName);
-                GameObject.DontDestroyOnLoad(appHubGO);
-            }
-
-            var appHub = appHubGO.GetComponent<AppHub>();
-            if (appHub == null)
-            {
-                appHub = appHubGO.AddComponent<AppHub>();
-            }
-            return appHub;
         }
 
         /// <summary>
