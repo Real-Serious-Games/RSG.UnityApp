@@ -28,22 +28,42 @@ namespace RSG
         public ITaskManager TaskManager { get; set; }
 
         /// <summary>
+        /// Set to true once shutdown.
+        /// </summary>
+        private bool hasShutdown = false;
+
+        /// <summary>
         /// Callback invoked on app shutdown.
         /// </summary>
         public Action Shutdown { get; set; }
 
         protected void Update()
         {
+            if (hasShutdown)
+            {
+                return;
+            }
+
             TaskManager.Update(Time.deltaTime);
         }
 
         protected void LateUpdate()
         {
+            if (hasShutdown)
+            {
+                return;
+            }
+
             TaskManager.LateUpdate(Time.deltaTime);
         }
 
         public void OnRenderObject()
         {
+            if (hasShutdown)
+            {
+                return;
+            }
+
             TaskManager.Render();
         }
 
@@ -51,6 +71,11 @@ namespace RSG
         {
             while (true)
             {
+                if (hasShutdown)
+                {
+                    yield return null;
+                }
+
                 yield return new WaitForEndOfFrame();
                 TaskManager.EndOfFrame();
             }
@@ -61,6 +86,8 @@ namespace RSG
         /// </summary>
         private void OnApplicationQuit()
         {
+            hasShutdown = true;
+
             if (Shutdown != null)
             {
                 Shutdown();
