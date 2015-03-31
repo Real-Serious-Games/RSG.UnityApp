@@ -10,19 +10,7 @@ namespace RSG
     /// <summary>
     /// Hub of the app, notifies important events.
     /// </summary>
-    public interface IAppHub
-    {
-        /// <summary>
-        /// Callback invoked on app shutdown.
-        /// </summary>
-        Action Shutdown { get; set; }
-    }
-
-    /// <summary>
-    /// Hub of the app, notifies important events.
-    /// </summary>
-    [UnitySingleton(typeof(IAppHub))]
-    public class AppHub : MonoBehaviour, IAppHub
+    public class AppHub : MonoBehaviour
     {
         [Dependency]
         public ITaskManager TaskManager { get; set; }
@@ -36,6 +24,11 @@ namespace RSG
         /// Callback invoked on app shutdown.
         /// </summary>
         public Action Shutdown { get; set; }
+
+        private void Start()
+        {
+            App.ResolveDependencies(this);
+        }
 
         protected void Update()
         {
