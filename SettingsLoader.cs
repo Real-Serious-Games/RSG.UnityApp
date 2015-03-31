@@ -131,7 +131,7 @@ namespace RSG
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to set watch on file {SettingsFilePath}", SettingsFilePath)
+                logger.LogError(ex, "Failed to set watch on file {SettingsFilePath}", settingsFilePath);
             }
         }
     }
