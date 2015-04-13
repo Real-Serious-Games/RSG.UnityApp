@@ -104,6 +104,12 @@ namespace RSG
         /// </summary>
         private void WatchConfigFile()
         {
+            if (!Directory.Exists(settingsFilePath))
+            {
+                logger.LogError("Not going to watch settings directory {SettingsFilePath}, this directory doesn't exist.", settingsFilePath);
+                return;
+            }
+
             try
             {
                 var watcher = new FileSystemWatcher();
