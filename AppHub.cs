@@ -30,7 +30,7 @@ namespace RSG
 
         private void Start()
         {
-            App.ResolveDependencies(this);
+            App.Instance.Factory.ResolveDependencies(this);
         }
 
         protected void Update()

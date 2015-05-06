@@ -17,7 +17,6 @@ namespace RSG
     /// <summary>
     /// Serilog sink that writes to Http log using Unity's WWW class.
     /// </summary>
-    [SerilogSink]
     internal class SerilogHttpSink : ILogEventSink
     {
         /// <summary>
@@ -28,15 +27,19 @@ namespace RSG
         /// <summary>
         /// URL to post logs to.
         /// </summary>
-        private static readonly string LogPostUrl = "http://10.1.1.34:5555/log";
+        private string logPostUrl;
 
         /// <summary>
         /// Headers used for HTTP POST.
         /// </summary>
         private static readonly Dictionary<string, string> headers = new Dictionary<string, string>();
 
-        public SerilogHttpSink()
+        public SerilogHttpSink(string logPostUrl)
         {
+            Argument.StringNotNullOrEmpty(() => logPostUrl);
+
+            this.logPostUrl = logPostUrl;
+
             headers.Add("Content-Type", "application/json");
         }
 
@@ -64,7 +67,7 @@ namespace RSG
                 Logs = logs
             });
 
-            new WWW(LogPostUrl, Encoding.ASCII.GetBytes(json), headers);
+            new WWW(logPostUrl, Encoding.ASCII.GetBytes(json), headers);
         }
 
         /// <summary>

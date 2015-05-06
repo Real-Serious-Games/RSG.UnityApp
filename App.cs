@@ -73,6 +73,11 @@ namespace RSG
         private static readonly string SystemReportsPath = "System";
 
         /// <summary>
+        /// Interface that can be implemented by user's of the library to pass in settings to RSG.UnityApp.
+        /// </summary>
+        private IAppConfigurator appConfigurator;
+
+        /// <summary>
         /// Accessor for the singleton app instance.
         /// </summary>
         public static IApp Instance { get; private set; }
@@ -91,31 +96,38 @@ namespace RSG
         /// <summary>
         /// Initialize the app. Can be called multiple times.
         /// </summary>
-        public static void Init()
+        public static void Init(IAppConfigurator appConfigurator)
         {
+            Argument.NotNull(() => appConfigurator);
+
             if (Instance != null)
             {
                 // Already initialised.
                 return;
             }
 
-            Instance = new App();
+            Instance = new App(appConfigurator);
         }
 
         /// <summary>
         /// Resolve dependencies on a specific object, first ensuring that the application has been initialized.
         /// </summary>
-        public static void ResolveDependencies(object obj)
+        public static void ResolveDependencies(object obj, IAppConfigurator appConfigurator)
         {
             Argument.NotNull(() => obj);
+            Argument.NotNull(() => appConfigurator);
 
-            Init();
+            Init(appConfigurator);
 
             Instance.Factory.ResolveDependencies(obj);
         }
 
-        public App()
+        public App(IAppConfigurator appConfigurator)
         {
+            Argument.NotNull(() => appConfigurator);
+
+            this.appConfigurator = appConfigurator;
+
             CreateLogsDirectory();
 
             var loggerConfig = new Serilog.LoggerConfiguration()
@@ -127,6 +139,11 @@ namespace RSG
                 loggerConfig.WriteTo.File(Path.Combine(LogsDirectoryPath, "Errors.log"), LogEventLevel.Error);
                 loggerConfig.WriteTo.File(Path.Combine(LogsDirectoryPath, "Info.log"), LogEventLevel.Information);
                 loggerConfig.WriteTo.File(Path.Combine(LogsDirectoryPath, "Verbose.log"), LogEventLevel.Verbose);
+            }
+
+            if (!string.IsNullOrEmpty(appConfigurator.LogPostUrl))
+            {
+                loggerConfig.WriteTo.Sink(new SerilogHttpSink(appConfigurator.LogPostUrl));
             }
 
             var reflection = new Reflection();
