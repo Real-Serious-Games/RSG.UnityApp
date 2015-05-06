@@ -43,6 +43,11 @@ namespace RSG
         private ILogger logger;
 
         /// <summary>
+        /// Used for delegating actions to the main thread as it is very difficult to play with the Unity API on a worker thread.
+        /// </summary>
+        private IDispatcher dispatcher;
+
+        /// <summary>
         /// The loaded settings data.
         /// </summary>
         public SettingsT Data
@@ -56,13 +61,15 @@ namespace RSG
         /// </summary>
         public event EventHandler<EventArgs> SettingsChanged;
 
-        public Settings(string settingsFilePath, ILogger logger)
+        public Settings(string settingsFilePath, ILogger logger, IDispatcher dispatcher)
         {
             Argument.StringNotNullOrEmpty(() => settingsFilePath);
             Argument.NotNull(() => logger);
+            Argument.NotNull(() => dispatcher);            
 
             this.settingsFilePath = settingsFilePath;
             this.logger = logger;
+            this.dispatcher = dispatcher;
 
             try
             {
@@ -104,7 +111,7 @@ namespace RSG
         /// </summary>
         private void WatchConfigFile()
         {
-            if (!Directory.Exists(settingsFilePath))
+            if (!File.Exists(settingsFilePath))
             {
                 logger.LogError("Not going to watch settings directory {SettingsFilePath}, this directory doesn't exist.", settingsFilePath);
                 return;
@@ -130,7 +137,7 @@ namespace RSG
 
                         if (SettingsChanged != null)
                         {
-                            SettingsChanged(this, EventArgs.Empty);
+                            dispatcher.InvokeAsync(() => SettingsChanged(this, EventArgs.Empty));
                         }
                     };
                 watcher.EnableRaisingEvents = true;
@@ -164,6 +171,9 @@ namespace RSG
         [Dependency]
         public ILogger Logger { get; set; }
 
+        [Dependency]
+        public IDispatcher Dispatcher { get; set; }
+
         /// <summary>
         /// The path that contains settings.
         /// </summary>
@@ -177,7 +187,7 @@ namespace RSG
             where SettingsT : new()
         {
             var settingsFilePath = Path.Combine(settingsFolderPath, settingsName + ".json");
-            return new Settings<SettingsT>(settingsFilePath, Logger);
+            return new Settings<SettingsT>(settingsFilePath, Logger, Dispatcher);
         }
     }
 }
