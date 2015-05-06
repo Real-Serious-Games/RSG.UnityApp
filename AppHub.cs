@@ -15,6 +15,9 @@ namespace RSG
         [Dependency]
         public ITaskManager TaskManager { get; set; }
 
+        [Dependency]
+        public IDispatchQueue DispatchQueue { get; set; }
+
         /// <summary>
         /// Set to true once shutdown.
         /// </summary>
@@ -36,6 +39,8 @@ namespace RSG
             {
                 return;
             }
+
+            DispatchQueue.ExecutePending();
 
             TaskManager.Update(Time.deltaTime);
         }
