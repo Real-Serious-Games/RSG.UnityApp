@@ -22,12 +22,12 @@ namespace RSG
         /// <summary>
         /// Logs that have been batched fro sending.
         /// </summary>
-        //todo: private static readonly List<LogEvent> batchedLogs = new List<LogEvent>();
+        private static readonly List<LogEvent> batchedLogs = new List<LogEvent>();
 
         /// <summary>
         /// URL to post logs to.
         /// </summary>
-        private string logPostUrl;
+        private static string logPostUrl;
 
         /// <summary>
         /// Headers used for HTTP POST.
@@ -38,20 +38,19 @@ namespace RSG
         {
             Argument.StringNotNullOrEmpty(() => logPostUrl);
 
-            this.logPostUrl = logPostUrl;
+            SerilogHttpSink.logPostUrl = logPostUrl;
 
             headers.Add("Content-Type", "application/json");
         }
 
         public void Emit(LogEvent logEvent)
         {
-            /*
             lock (batchedLogs)
             {
                 batchedLogs.Add(logEvent);
             }
-             * */
 
+            /* Single log sending.
             var logs = LinqExts.FromItems(logEvent)
                 .Select(log => new
                 {
@@ -68,6 +67,7 @@ namespace RSG
             });
 
             new WWW(logPostUrl, Encoding.ASCII.GetBytes(json), headers);
+             * */
         }
 
         /// <summary>
@@ -75,7 +75,12 @@ namespace RSG
         /// </summary>
         public static void SendBatch()
         {
-            /*
+            if (batchedLogs.Count == 0)
+            {
+                // Nothing batched.
+                return;
+            }
+
             lock (batchedLogs)
             {
                 var logs = batchedLogs.Select(logEvent => new
@@ -95,9 +100,8 @@ namespace RSG
 
                 batchedLogs.Clear(); // Clear pending logs.
 
-                new WWW(LogPostUrl, Encoding.ASCII.GetBytes(json), headers);
+                new WWW(logPostUrl, Encoding.ASCII.GetBytes(json), headers);
             }
-             * */
         }
     }
 }

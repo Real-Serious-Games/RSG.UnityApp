@@ -40,6 +40,8 @@ namespace RSG
                 return;
             }
 
+            SerilogHttpSink.SendBatch();
+
             DispatchQueue.ExecutePending();
 
             TaskManager.Update(Time.deltaTime);
