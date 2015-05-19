@@ -78,80 +78,150 @@ namespace RSG
 
             try
             {
-                reportLogger.LogInfo("=== Unity System Information ===");
-                reportLogger.LogInfo("Application");
-                reportLogger.LogInfo("    dataPath: {dataPath}", Application.dataPath);
-                reportLogger.LogInfo("    internetReachability: {internetReachability}", Application.internetReachability);
-                reportLogger.LogInfo("    loadedLevelName: {loadedLevelName}", Application.loadedLevelName);
-                reportLogger.LogInfo("    persistentDataPath: {persistentDataPath}", Application.persistentDataPath);
-                reportLogger.LogInfo("    platform: {platform}", Application.platform);
-                reportLogger.LogInfo("    unityVersion: {unityVersion}", Application.unityVersion);
-                reportLogger.LogInfo("SystemInfo");
-                reportLogger.LogInfo("    deviceModel: {deviceModel}", SystemInfo.deviceModel);
-                reportLogger.LogInfo("    deviceName: {deviceName}", SystemInfo.deviceName);
-                reportLogger.LogInfo("    deviceType: {deviceType}", SystemInfo.deviceType);
-                reportLogger.LogInfo("    deviceUniqueIdentifier: {deviceUniqueIdentifier}", SystemInfo.deviceUniqueIdentifier);
-                reportLogger.LogInfo("    graphicsDeviceID: {graphicsDeviceID}", SystemInfo.graphicsDeviceID);
-                reportLogger.LogInfo("    graphicsDeviceName: {graphicsDeviceName}", SystemInfo.graphicsDeviceName);
-                reportLogger.LogInfo("    graphicsDeviceVendor: {graphicsDeviceVendor}", SystemInfo.graphicsDeviceVendor);
-                reportLogger.LogInfo("    graphicsDeviceVendorID: {graphicsDeviceVendorID}", SystemInfo.graphicsDeviceVendorID);
-                reportLogger.LogInfo("    graphicsDeviceVersion: {graphicsDeviceVersion}", SystemInfo.graphicsDeviceVersion);
-                reportLogger.LogInfo("    graphicsMemorySize: {graphicsMemorySize}", SystemInfo.graphicsMemorySize);
-                reportLogger.LogInfo("    graphicsPixelFillrate: {graphicsPixelFillrate}", SystemInfo.graphicsPixelFillrate);
-                reportLogger.LogInfo("    graphicsShaderLevel: {graphicsShaderLevel}", SystemInfo.graphicsShaderLevel);
-                reportLogger.LogInfo("    npotSupport: {npotSupport}", SystemInfo.npotSupport);
-                reportLogger.LogInfo("    operatingSystem: {operatingSystem}", SystemInfo.operatingSystem);
-                reportLogger.LogInfo("    processorCount: {processorCount}", SystemInfo.processorCount);
-                reportLogger.LogInfo("    processorType: {processorType}", SystemInfo.processorType);
-                reportLogger.LogInfo("    supportedRenderTargetCount: {supportedRenderTargetCount}", SystemInfo.supportedRenderTargetCount);
-                reportLogger.LogInfo("    supports3DTextures: {supports3DTextures}", SystemInfo.supports3DTextures);
-                reportLogger.LogInfo("    supportsAccelerometer: {supportsAccelerometer}", SystemInfo.supportsAccelerometer);
-                reportLogger.LogInfo("    supportsComputeShaders: {supportsComputeShaders}", SystemInfo.supportsComputeShaders);
-                reportLogger.LogInfo("    supportsGyroscope: {supportsGyroscope}", SystemInfo.supportsGyroscope);
-                reportLogger.LogInfo("    supportsImageEffects: {supportsImageEffects}", SystemInfo.supportsImageEffects);
-                reportLogger.LogInfo("    supportsInstancing: {supportsInstancing}", SystemInfo.supportsInstancing);
-                reportLogger.LogInfo("    supportsLocationService: {supportsLocationService}", SystemInfo.supportsLocationService);
-                reportLogger.LogInfo("    supportsRenderTextures: {supportsRenderTextures}", SystemInfo.supportsRenderTextures);
-                reportLogger.LogInfo("    supportsRenderToCubemap: {supportsRenderToCubemap}", SystemInfo.supportsRenderToCubemap);
-                reportLogger.LogInfo("    supportsShadows: {supportsShadows}", SystemInfo.supportsShadows);
-                reportLogger.LogInfo("    supportsStencil: {supportsStencil}", SystemInfo.supportsStencil);
-                reportLogger.LogInfo("    supportsVibration: {supportsVibration}", SystemInfo.supportsVibration);
-                reportLogger.LogInfo("    systemMemorySize: {systemMemorySize}", SystemInfo.systemMemorySize);
-                reportLogger.LogInfo("QualitySettings");
-                reportLogger.LogInfo("    Current quality level: {qualityLevel}", QualitySettings.names[QualitySettings.GetQualityLevel()] + " (" + QualitySettings.GetQualityLevel() + ")");
-                reportLogger.LogInfo("    Quality level names: {qualityLevels}", QualitySettings.names);
-                reportLogger.LogInfo("    activeColorSpace: {activeColorSpace}", QualitySettings.activeColorSpace);
-                reportLogger.LogInfo("    anisotropicFiltering: {anisotropicFiltering}", QualitySettings.anisotropicFiltering);
-                reportLogger.LogInfo("    antiAliasing: {antiAliasing}", QualitySettings.antiAliasing);
-                reportLogger.LogInfo("    blendWeights: {blendWeights}", QualitySettings.blendWeights);
-                reportLogger.LogInfo("    desiredColorSpace: {desiredColorSpace}", QualitySettings.desiredColorSpace);
-                reportLogger.LogInfo("    lodBias: {lodBias}", QualitySettings.lodBias);
-                reportLogger.LogInfo("    masterTextureLimit: {masterTextureLimit}", QualitySettings.masterTextureLimit);
-                reportLogger.LogInfo("    maximumLODLevel: {desiredColorSpace}", QualitySettings.desiredColorSpace);
-                reportLogger.LogInfo("    maxQueuedFrames: {maxQueuedFrames}", QualitySettings.maxQueuedFrames);
-                reportLogger.LogInfo("    particleRaycastBudget: {particleRaycastBudget}", QualitySettings.particleRaycastBudget);
-                reportLogger.LogInfo("    pixelLightCount: {pixelLightCount}", QualitySettings.pixelLightCount);
-                reportLogger.LogInfo("    shadowCascades: {shadowCascades}", QualitySettings.shadowCascades);
-                reportLogger.LogInfo("    shadowDistance: {shadowDistance}", QualitySettings.shadowDistance);
-                reportLogger.LogInfo("    shadowProjection: {shadowProjection}", QualitySettings.shadowProjection);
-                reportLogger.LogInfo("    softVegetation: {softVegetation}", QualitySettings.softVegetation);
-                reportLogger.LogInfo("    vSyncCount: {vSyncCount}", QualitySettings.vSyncCount);
-                reportLogger.LogInfo("Screen");
-                reportLogger.LogInfo("    currentResolution: {resolutionX} x {resolutionY}", Screen.currentResolution.width, Screen.currentResolution.height);
-                reportLogger.LogInfo("    refreshRate: {refreshRate} hz", Screen.currentResolution.refreshRate);
-                reportLogger.LogInfo("    fullScreen: {fullScreen}", Screen.fullScreen);
+                var msg = msgTemplate + 
+                    Screen.resolutions
+                        .Select((resolution, i) => "[{ResolutionIndex}] {resolutionWidth} x {resolutionHeight} ({resolutionRefreshRate} hz)")
+                        .Join("\r\n");
 
-                reportLogger.LogInfo("    Resolutions");
+                object[] msgParams = LinqExts.FromItems<object>(
+                    Application.dataPath,
+                    Application.internetReachability,
+                    Application.loadedLevelName,
+                    Application.persistentDataPath,
+                    Application.platform,
+                    Application.unityVersion,
+                    SystemInfo.deviceModel,
+                    SystemInfo.deviceName,
+                    SystemInfo.deviceType,
+                    SystemInfo.deviceUniqueIdentifier,
+                    SystemInfo.graphicsDeviceID,
+                    SystemInfo.graphicsDeviceName,
+                    SystemInfo.graphicsDeviceVendor,
+                    SystemInfo.graphicsDeviceVendorID,
+                    SystemInfo.graphicsDeviceVersion,
+                    SystemInfo.graphicsMemorySize,
+                    SystemInfo.graphicsPixelFillrate,
+                    SystemInfo.graphicsShaderLevel,
+                    SystemInfo.npotSupport,
+                    SystemInfo.operatingSystem,
+                    SystemInfo.processorCount,
+                    SystemInfo.processorType,
+                    SystemInfo.supportedRenderTargetCount,
+                    SystemInfo.supports3DTextures,
+                    SystemInfo.supportsAccelerometer,
+                    SystemInfo.supportsComputeShaders,
+                    SystemInfo.supportsGyroscope,
+                    SystemInfo.supportsImageEffects,
+                    SystemInfo.supportsInstancing,
+                    SystemInfo.supportsLocationService,
+                    SystemInfo.supportsRenderTextures,
+                    SystemInfo.supportsRenderToCubemap,
+                    SystemInfo.supportsShadows,
+                    SystemInfo.supportsStencil,
+                    SystemInfo.supportsVibration,
+                    SystemInfo.systemMemorySize,
+                    QualitySettings.names[QualitySettings.GetQualityLevel()] + " (" + QualitySettings.GetQualityLevel() + ")",
+                    QualitySettings.names,
+                    QualitySettings.activeColorSpace,
+                    QualitySettings.anisotropicFiltering,
+                    QualitySettings.antiAliasing,
+                    QualitySettings.blendWeights,
+                    QualitySettings.desiredColorSpace,
+                    QualitySettings.lodBias,
+                    QualitySettings.masterTextureLimit,
+                    QualitySettings.maximumLODLevel,
+                    QualitySettings.maxQueuedFrames,
+                    QualitySettings.particleRaycastBudget,
+                    QualitySettings.pixelLightCount,
+                    QualitySettings.shadowCascades,
+                    QualitySettings.shadowDistance,
+                    QualitySettings.shadowProjection,
+                    QualitySettings.softVegetation,
+                    QualitySettings.vSyncCount,
+                    Screen.currentResolution.width, Screen.currentResolution.height,
+                    Screen.currentResolution.refreshRate,
+                    Screen.fullScreen
+                ).
+                Concat(
+                    Screen.resolutions
+                        .SelectMany(resolution => 
+                            LinqExts.FromItems<object>(resolution.width, resolution.height, resolution.refreshRate)
+                        )
+                )
+                .ToArray();
 
-                Screen.resolutions.Each((resolution, i) => 
-                {
-                    reportLogger.LogInfo("        [{ResolutionIndex}] {resolutionWidth} x {resolutionHeight} ({resolutionRefreshRate} hz)", i, resolution.width, resolution.height, resolution.refreshRate);
-                });
+                reportLogger.LogInfo(msg, msgParams);
             }
             catch (Exception ex)
             {
                 reportLogger.LogError(ex, "Failed to get Unity system info");
             }
         }
+
+
+        public static readonly string msgTemplate = 
+            "=== Unity System Information ===\r\n" +
+            "Application\r\n" + 
+            "    dataPath: {dataPath}\r\n" + 
+            "    internetReachability: {internetReachability}\r\n" + 
+            "    loadedLevelName: {loadedLevelName}\r\n" + 
+            "    persistentDataPath: {persistentDataPath}\r\n" + 
+            "    platform: {platform}\r\n" + 
+            "    unityVersion: {unityVersion}\r\n" + 
+            "SystemInfo\r\n" + 
+            "    deviceModel: {deviceModel}\r\n" + 
+            "    deviceName: {deviceName}\r\n" + 
+            "    deviceType: {deviceType}\r\n" + 
+            "    deviceUniqueIdentifier: {deviceUniqueIdentifier}\r\n" + 
+            "    graphicsDeviceID: {graphicsDeviceID}\r\n" + 
+            "    graphicsDeviceName: {graphicsDeviceName}\r\n" + 
+            "    graphicsDeviceVendor: {graphicsDeviceVendor}\r\n" + 
+            "    graphicsDeviceVendorID: {graphicsDeviceVendorID}\r\n" + 
+            "    graphicsDeviceVersion: {graphicsDeviceVersion}\r\n" + 
+            "    graphicsMemorySize: {graphicsMemorySize}\r\n" + 
+            "    graphicsPixelFillrate: {graphicsPixelFillrate}\r\n" + 
+            "    graphicsShaderLevel: {graphicsShaderLevel}\r\n" + 
+            "    npotSupport: {npotSupport}\r\n" + 
+            "    operatingSystem: {operatingSystem}\r\n" + 
+            "    processorCount: {processorCount}\r\n" + 
+            "    processorType: {processorType}\r\n" + 
+            "    supportedRenderTargetCount: {supportedRenderTargetCount}\r\n" + 
+            "    supports3DTextures: {supports3DTextures}\r\n" + 
+            "    supportsAccelerometer: {supportsAccelerometer}\r\n" + 
+            "    supportsComputeShaders: {supportsComputeShaders}\r\n" + 
+            "    supportsGyroscope: {supportsGyroscope}\r\n" + 
+            "    supportsImageEffects: {supportsImageEffects}\r\n" + 
+            "    supportsInstancing: {supportsInstancing}\r\n" + 
+            "    supportsLocationService: {supportsLocationService}\r\n" + 
+            "    supportsRenderTextures: {supportsRenderTextures}\r\n" + 
+            "    supportsRenderToCubemap: {supportsRenderToCubemap}\r\n" + 
+            "    supportsShadows: {supportsShadows}\r\n" + 
+            "    supportsStencil: {supportsStencil}\r\n" + 
+            "    supportsVibration: {supportsVibration}\r\n" + 
+            "    systemMemorySize: {systemMemorySize}\r\n" + 
+            "QualitySettings\r\n" + 
+            "    Current quality level: {qualityLevel}\r\n" + 
+            "    Quality level names: {qualityLevels}\r\n" + 
+            "    activeColorSpace: {activeColorSpace}\r\n" + 
+            "    anisotropicFiltering: {anisotropicFiltering}\r\n" + 
+            "    antiAliasing: {antiAliasing}\r\n" + 
+            "    blendWeights: {blendWeights}\r\n" + 
+            "    desiredColorSpace: {desiredColorSpace}\r\n" + 
+            "    lodBias: {lodBias}\r\n" + 
+            "    masterTextureLimit: {masterTextureLimit}\r\n" + 
+            "    maximumLODLevel: {maximumLODLevel}\r\n" + 
+            "    maxQueuedFrames: {maxQueuedFrames}\r\n" + 
+            "    particleRaycastBudget: {particleRaycastBudget}\r\n" + 
+            "    pixelLightCount: {pixelLightCount}\r\n" + 
+            "    shadowCascades: {shadowCascades}\r\n" + 
+            "    shadowDistance: {shadowDistance}\r\n" + 
+            "    shadowProjection: {shadowProjection}\r\n" + 
+            "    softVegetation: {softVegetation}\r\n" + 
+            "    vSyncCount: {vSyncCount}\r\n" + 
+            "Screen\r\n" + 
+            "    currentResolution: {resolutionX} x {resolutionY}\r\n" + 
+            "    refreshRate: {refreshRate} hz\r\n" + 
+            "    fullScreen: {fullScreen}\r\n" + 
+            "Resolutions\r\n";
     }
 }
