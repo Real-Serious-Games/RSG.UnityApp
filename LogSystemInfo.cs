@@ -36,7 +36,7 @@ namespace RSG
         /// <summary>
         /// Log system information.
         /// </summary>
-        public void Output()
+        public void Output(IAppConfigurator appConfigurator)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace RSG
 
             var fileLoggerConfig = new LoggerConfiguration()
                 .WriteTo.File(systemReportFile, Serilog.Events.LogEventLevel.Debug)
-                .Enrich.With<RSGLogEnricher>();
+                .Enrich.With(new RSGLogEnricher(appConfigurator));
             var fileLogger = new SerilogLogger(fileLoggerConfig.CreateLogger());
             var reportLogger = new MultiLogger(logger, fileLogger);
 

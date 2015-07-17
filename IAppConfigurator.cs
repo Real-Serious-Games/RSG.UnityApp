@@ -14,5 +14,15 @@ namespace RSG
         /// URL used to HTTP post log messages (or null to disable HTTP post).
         /// </summary>
         string LogPostUrl { get; }
+
+        /// <summary>
+        /// The major version number of the app.
+        /// </summary>
+        int MajorVersionNumber { get; }
+
+        /// <summary>
+        /// The minor version number of the app.
+        /// </summary>
+        int MinorVersionNumber { get; }
     }
 }

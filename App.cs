@@ -150,7 +150,7 @@ namespace RSG
 
             var loggerConfig = new Serilog.LoggerConfiguration()
                 .WriteTo.Trace()
-                .Enrich.With<RSGLogEnricher>();
+                .Enrich.With(new RSGLogEnricher(appConfigurator));
 
             if (logsDirectoryStatus == LogsDirectoryStatus.Created)
             {
@@ -184,7 +184,7 @@ namespace RSG
                 logger.LogInfo("Writing logs and reports to {LogsDirectoryPath}", LogsDirectoryPath);
             }
 
-            LogSystemInfo(logger);
+            LogSystemInfo(logger, appConfigurator);
 
             var factory = new Factory("App", logger, reflection);
             factory.Dep<RSG.Utils.ILogger>(logger);
@@ -307,11 +307,11 @@ namespace RSG
         /// <summary>
         /// Dump out system info.
         /// </summary>
-        private void LogSystemInfo(RSG.Utils.ILogger logger)
+        private void LogSystemInfo(RSG.Utils.ILogger logger, IAppConfigurator appConfigurator)
         {
             var systemReportsPath = Path.Combine(LogsDirectoryPath, SystemReportsPath);
             var logSystemInfo = new LogSystemInfo(logger, systemReportsPath);
-            logSystemInfo.Output();
+            logSystemInfo.Output(appConfigurator);
         }
 
         /// <summary>
