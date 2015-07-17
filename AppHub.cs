@@ -92,6 +92,8 @@ namespace RSG
             {
                 Shutdown();
             }
+
+            SerilogHttpSink.SendBatch();
         }
     }
 }
