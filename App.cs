@@ -8,6 +8,7 @@ using Serilog;
 using Serilog.Events;
 using System.IO;
 using RSG.Scene.Query;
+using Newtonsoft.Json;
 
 namespace RSG
 {
@@ -94,6 +95,23 @@ namespace RSG
         }
 
         /// <summary>
+        /// The path to where persistant device info is stored.
+        /// </summary>
+        private string DeviceInfoFilePath
+        {
+            get
+            {
+                return Path.Combine(Application.persistentDataPath, "DeviceInfo.json");
+            }
+        }
+
+        /// <summary>
+        /// Unique identifier that for this device.
+        /// This is generated on first run and then persisted from instance-to-instance of the app.
+        /// </summary>
+        public static Guid DeviceID { get; private set; }
+
+        /// <summary>
         /// Initialize the app. Can be called multiple times.
         /// </summary>
         public static void Init(IAppConfigurator appConfigurator)
@@ -152,6 +170,8 @@ namespace RSG
                 loggerConfig.WriteTo.Sink((Serilog.Core.ILogEventSink)sinkType.GetConstructor(new Type[0]).Invoke(new object[0]));
             }
 
+            InitDeviceId();
+
             var logger = new SerilogLogger(loggerConfig.CreateLogger());
             logger.LogInfo("Application started at {TimeNow}", DateTime.Now);
             logger.LogInfo("Logs directory status: {LogsDirectoryStatus}", logsDirectoryStatus);
@@ -203,6 +223,85 @@ namespace RSG
                 }
                                     
             });
+        }
+
+        /// <summary>
+        /// Used for serializing persistent app info.
+        /// </summary>
+        private class DeviceInfo
+        {
+            /// <summary>
+            /// Unique ID for the device.
+            /// </summary>
+            public Guid DeviceID;
+        }
+
+        /// <summary>
+        /// Initialise an ID for the device the app is running. 
+        /// This allows each device to be uniquely identified.
+        /// </summary>
+        private void InitDeviceId()
+        {
+            if (LoadDeviceId())
+            {
+                // Loaded previously saved device id.
+                return;
+            }
+
+            // No device info was loaded.
+            // Create a new device ID and serialize it.
+            var deviceID = Guid.NewGuid();
+            App.DeviceID = deviceID;
+
+            Debug.Log("Allocated device id " + deviceID);
+
+            try
+            {
+                File.WriteAllText(DeviceInfoFilePath,
+                    JsonConvert.SerializeObject(
+                        new DeviceInfo()
+                        {
+                            DeviceID = deviceID
+                        }
+                    )
+                );
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Failed to save DeviceInfo file: " + DeviceInfoFilePath);
+                Debug.LogException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Load device ID from the device info file.
+        /// Returns false if the file doesn't exist or failes to load
+        /// </summary>
+        private bool LoadDeviceId()
+        {
+            //
+            // Load device ID.
+            //
+            if (!File.Exists(DeviceInfoFilePath))
+            {
+                return false;
+            }
+
+            Debug.Log("Loading device info file: " + DeviceInfoFilePath);
+
+            try
+            {
+                var deviceInfo = JsonConvert.DeserializeObject<DeviceInfo>(File.ReadAllText(DeviceInfoFilePath));
+                App.DeviceID = deviceInfo.DeviceID;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Failed to load DeviceInfo file: " + DeviceInfoFilePath);
+                Debug.LogException(ex);
+
+                return false;
+            }
         }
 
         /// <summary>
@@ -298,5 +397,6 @@ namespace RSG
             get;
             private set;
         }
+
     }
 }

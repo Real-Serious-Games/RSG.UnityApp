@@ -75,7 +75,7 @@ namespace RSG
             {
                 LoadSettings();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 this.Data = new SettingsT(); // Error has already been reported.
             }
