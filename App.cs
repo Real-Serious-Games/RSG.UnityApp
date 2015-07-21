@@ -267,7 +267,7 @@ namespace RSG
             // Create a new device ID.
             var deviceID = Guid.NewGuid();
             App.DeviceID = deviceID;
-            App.DeviceName = deviceID.ToString();
+            App.DeviceName = string.Empty;
 
             Debug.Log("Allocated device id " + deviceID);
 
