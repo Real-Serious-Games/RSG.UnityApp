@@ -29,6 +29,11 @@ namespace RSG
             logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("MachineName", Environment.MachineName));
             logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("AppInstanceID", App.AppInstanceID));
             logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("DeviceID", App.DeviceID));
+            if (string.IsNullOrEmpty(App.DeviceName))
+            {
+                logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("DeviceName", App.DeviceName));
+            }
+            
             logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("AppMajorVersion", appConfigurator.MajorVersionNumber));
             logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("AppMinorVersion", appConfigurator.MinorVersionNumber));
         }
