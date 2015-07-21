@@ -171,7 +171,13 @@ namespace RSG
 
             if (!string.IsNullOrEmpty(appConfigurator.LogPostUrl))
             {
+                Debug.Log("Sending log messages via HTTP to " + appConfigurator.LogPostUrl);
+
                 loggerConfig.WriteTo.Sink(new SerilogHttpSink(appConfigurator.LogPostUrl));
+            }
+            else
+            {
+                Debug.Log("Not sending log messages via HTTP");
             }
 
             var reflection = new Reflection();
