@@ -26,6 +26,11 @@ namespace RSG
         /// Global logger.
         /// </summary>
         RSG.Utils.ILogger Logger { get; }
+
+        /// <summary>
+        /// The name of the device assigned by the application.
+        /// </summary>
+        void SetDeviceName(string newDeviceName);
     }
 
     /// <summary>
@@ -112,6 +117,11 @@ namespace RSG
         public static Guid DeviceID { get; private set; }
 
         /// <summary>
+        /// A name for the device. This name can be assigned by the app, although it defaults to the device ID.
+        /// </summary>
+        public static string DeviceName { get; private set; }
+
+        /// <summary>
         /// Initialize the app. Can be called multiple times.
         /// </summary>
         public static void Init(IAppConfigurator appConfigurator)
@@ -184,8 +194,8 @@ namespace RSG
                 logger.LogInfo("Writing logs and reports to {LogsDirectoryPath}", LogsDirectoryPath);
             }
 
-            LogSystemInfo(logger, appConfigurator);
 
+            LogSystemInfo(logger, appConfigurator);
             var factory = new Factory("App", logger, reflection);
             factory.Dep<RSG.Utils.ILogger>(logger);
             var dispatcher = new Dispatcher(logger);
@@ -234,6 +244,11 @@ namespace RSG
             /// Unique ID for the device.
             /// </summary>
             public Guid DeviceID;
+
+            /// <summary>
+            /// A name that can be assigned to the device (defaults to the ID).
+            /// </summary>
+            public string DeviceName;
         }
 
         /// <summary>
@@ -249,19 +264,42 @@ namespace RSG
             }
 
             // No device info was loaded.
-            // Create a new device ID and serialize it.
+            // Create a new device ID.
             var deviceID = Guid.NewGuid();
             App.DeviceID = deviceID;
+            App.DeviceName = deviceID.ToString();
 
             Debug.Log("Allocated device id " + deviceID);
 
+            SaveDeviceInfoFile();
+        }
+
+        /// <summary>
+        /// The name of the device assigned by the application.
+        /// </summary>
+        public void SetDeviceName(string newDeviceName)
+        {
+            Argument.StringNotNullOrEmpty(() => newDeviceName);
+
+            App.DeviceName = newDeviceName;
+
+            SaveDeviceInfoFile();
+        }
+
+        /// <summary>
+        /// Save the device info file to persistant data.
+        /// </summary>
+        private void SaveDeviceInfoFile()
+        {
             try
             {
+                // Serialize device ID, etc, to be remembered at next app instance.
                 File.WriteAllText(DeviceInfoFilePath,
                     JsonConvert.SerializeObject(
                         new DeviceInfo()
                         {
-                            DeviceID = deviceID
+                            DeviceID = App.DeviceID,
+                            DeviceName = App.DeviceName
                         }
                     )
                 );
@@ -293,6 +331,7 @@ namespace RSG
             {
                 var deviceInfo = JsonConvert.DeserializeObject<DeviceInfo>(File.ReadAllText(DeviceInfoFilePath));
                 App.DeviceID = deviceInfo.DeviceID;
+                App.DeviceName = deviceInfo.DeviceName;
                 return true;
             }
             catch (Exception ex)
@@ -397,6 +436,7 @@ namespace RSG
             get;
             private set;
         }
+
 
     }
 }
