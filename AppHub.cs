@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RSG.Utils;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,9 @@ namespace RSG
 
         [Dependency]
         public IDispatchQueue DispatchQueue { get; set; }
+
+        [Dependency]
+        public ILogger Logger { get; set; }
 
         /// <summary>
         /// Set to true once shutdown.
@@ -86,7 +90,10 @@ namespace RSG
         /// </summary>
         private void OnApplicationQuit()
         {
+            Logger.LogInfo("Application is shutting down...");
+
             hasShutdown = true;
+
 
             if (Shutdown != null)
             {
@@ -94,6 +101,8 @@ namespace RSG
             }
 
             SerilogHttpSink.SendBatch();
+
+            Logger.LogInfo("Flushed log and completed shutdown.");
         }
     }
 }
