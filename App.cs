@@ -290,7 +290,7 @@ namespace RSG
                 {
                     var previousAppRunning = JsonConvert.DeserializeObject<AppRunning>(File.ReadAllText(AppRunningFilePath));
 
-                    Logger.LogError("Unclean shutdown detected from previous application instance {AppInstanceID} which started at {AppStartDate}", previousAppRunning.AppInstance, previousAppRunning.StartedAt);
+                    Logger.LogError("Unclean shutdown detected from previous application instance {PrevAppInstanceID} which started at {AppStartDate}", previousAppRunning.AppInstance, previousAppRunning.StartedAt);
                 }
                 catch (Exception ex)
                 {
