@@ -111,6 +111,18 @@ namespace RSG
         }
 
         /// <summary>
+        /// Path where the 'running file' is saved. This is a file that is present when the app is running and
+        /// allows unclean shutdown to be detected.
+        /// </summary>
+        private string AppRunningFilePath
+        {
+            get
+            {
+                return Path.Combine(Application.persistentDataPath, "AppRunning.json");
+            }
+        }
+
+        /// <summary>
         /// Unique identifier that for this device.
         /// This is generated on first run and then persisted from instance-to-instance of the app.
         /// </summary>
@@ -189,6 +201,7 @@ namespace RSG
             InitDeviceId();
 
             var logger = new SerilogLogger(loggerConfig.CreateLogger());
+            this.Logger = logger;
             logger.LogInfo("Application started at {TimeNow}", DateTime.Now);
             logger.LogInfo("Logs directory status: {LogsDirectoryStatus}", logsDirectoryStatus);
             if (logsDirectoryStatus == LogsDirectoryStatus.Failed)
@@ -200,8 +213,10 @@ namespace RSG
                 logger.LogInfo("Writing logs and reports to {LogsDirectoryPath}", LogsDirectoryPath);
             }
 
-
             LogSystemInfo(logger, appConfigurator);
+
+            InitRunningFile();
+
             var factory = new Factory("App", logger, reflection);
             factory.Dep<RSG.Utils.ILogger>(logger);
             var dispatcher = new Dispatcher(logger);
@@ -213,13 +228,18 @@ namespace RSG
             var singletonManager = InitFactory(logger, factory, reflection);
 
             this.Factory = factory;
-            this.Logger = logger;
 
             singletonManager.InstantiateSingletons(factory);
             singletonManager.Startup();
 
             var appHub = InitAppHub();
-            appHub.Shutdown = () => singletonManager.Shutdown();
+            appHub.Shutdown = 
+                () =>
+                {
+                    singletonManager.Shutdown();
+
+                    DeleteRunningFile();
+                };
 
             // Initialize errors for unhandled promises.
             Promise.UnhandledException += (s, e) => logger.LogError(e.Exception, "Unhandled error from promise.");
@@ -239,6 +259,78 @@ namespace RSG
                 }
                                     
             });
+        }
+
+        /// <summary>
+        /// Used to serialize details of the running app.
+        /// </summary>
+        private class AppRunning
+        {
+            /// <summary>
+            /// The instance of the app that is running.
+            /// </summary>
+            public string AppInstance;
+
+            /// <summary>
+            /// The date the app started running at.
+            /// </summary>
+            public DateTime StartedAt;
+        }
+
+
+        /// <summary>
+        /// Initialise a file that is present while the app is running.
+        /// We use this to detect an unclean shutodwn on the next app instance.
+        /// </summary>
+        private void InitRunningFile()
+        {
+            if (File.Exists(AppRunningFilePath))
+            {
+                try
+                {
+                    var previousAppRunning = JsonConvert.DeserializeObject<AppRunning>(File.ReadAllText(AppRunningFilePath));
+
+                    Logger.LogError("Unclean shutdown detected from previous application instance {AppInstanceID} which started at {AppStartDate}", previousAppRunning.AppInstance, previousAppRunning.StartedAt);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(ex, "Unclean shutdown detected from previous application instance, was unable to read 'running file' from {AppRunningFilePath}", AppRunningFilePath);
+                }
+            }
+
+            try
+            {
+                File.WriteAllText(AppRunningFilePath,
+                    JsonConvert.SerializeObject(
+                        new AppRunning()
+                        {
+                            AppInstance = App.AppInstanceID,
+                            StartedAt = DateTime.Now
+                        }
+                    )
+                );
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to save 'running file'.");
+            }
+
+        }
+
+        /// <summary>
+        /// Delete the file that is present while the app is running.
+        /// This only happens on clean shutdown.
+        /// </summary>
+        private void DeleteRunningFile()
+        {
+            try
+            {
+                File.Delete(AppRunningFilePath);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to delete 'running file' at {AppRunningFilePath}", AppRunningFilePath);
+            }
         }
 
         /// <summary>

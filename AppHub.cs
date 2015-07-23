@@ -100,9 +100,9 @@ namespace RSG
                 Shutdown();
             }
 
-            SerilogHttpSink.SendBatch();
+            Logger.LogInfo("Flushing log and completed shutdown.");
 
-            Logger.LogInfo("Flushed log and completed shutdown.");
+            SerilogHttpSink.SendBatch();
         }
     }
 }
