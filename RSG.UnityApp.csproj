@@ -39,9 +39,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\RSG.Promise.1.1.2.0\lib\net35\RSG.Promise.dll</HintPath>
     </Reference>
-    <Reference Include="RSG.SceneQuery, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="RSG.SceneQuery, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\RSG.SceneQuery.1.0.2.0\lib\net35\RSG.SceneQuery.dll</HintPath>
+      <HintPath>packages\RSG.SceneQuery.1.0.3.0\lib\net35\RSG.SceneQuery.dll</HintPath>
     </Reference>
     <Reference Include="RSG.Toolkit">
       <HintPath>packages\RSG.Toolkit.1.0.0.0\lib\net35\RSG.Toolkit.dll</HintPath>
