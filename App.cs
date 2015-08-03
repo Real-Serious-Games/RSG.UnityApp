@@ -31,6 +31,11 @@ namespace RSG
         /// The name of the device assigned by the application.
         /// </summary>
         void SetDeviceName(string newDeviceName);
+
+        /// <summary>
+        /// The logs directory for this application instance.
+        /// </summary>
+        string LogsDirectoryPath { get; }
     }
 
     /// <summary>
@@ -89,7 +94,7 @@ namespace RSG
         public static IApp Instance { get; private set; }
 
         /// <summary>
-        /// The reports directory for this application instance.
+        /// The logs directory for this application instance.
         /// </summary>
         public string LogsDirectoryPath
         {
