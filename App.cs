@@ -222,6 +222,8 @@ namespace RSG
 
             InitRunningFile();
 
+            DeleteOldLogFiles();
+
             var factory = new Factory("App", logger, reflection);
             factory.Dep<RSG.Utils.ILogger>(logger);
             var dispatcher = new Dispatcher(logger);
@@ -481,6 +483,26 @@ namespace RSG
             {
                 logsDirectoryStatus = LogsDirectoryStatus.Failed;
                 logsDirectoryCreateException = ex;
+            }
+        }
+
+        /// <summary>
+        /// Removes log files more than a month old.
+        /// </summary>
+        private void DeleteOldLogFiles()
+        {
+            const int maxAgeDays = 30;
+
+            try
+            {
+                Directory
+                    .GetDirectories(Path.GetDirectoryName(LogsDirectoryPath))
+                    .Where(directory => Directory.GetLastWriteTime(directory) <= DateTime.Now.AddDays(-maxAgeDays))
+                    .Each(directory => Directory.Delete(directory, true));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error deleting old log files.");
             }
         }
 
