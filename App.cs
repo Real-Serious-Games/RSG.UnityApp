@@ -100,7 +100,18 @@ namespace RSG
         {
             get
             {
-                return Path.Combine(Path.Combine(Application.persistentDataPath, LogsDirectoryName), AppInstanceID);
+                return Path.Combine(GlobalLogsDirectoryPath, AppInstanceID);
+            }
+        }
+
+        /// <summary>
+        /// Directory where subdirectories for application instance log files are stored.
+        /// </summary>
+        private string GlobalLogsDirectoryPath
+        {
+            get
+            {
+                return Path.Combine(Application.persistentDataPath, LogsDirectoryName);
             }
         }
 
@@ -496,7 +507,7 @@ namespace RSG
             try
             {
                 Directory
-                    .GetDirectories(Path.GetDirectoryName(LogsDirectoryPath))
+                    .GetDirectories(GlobalLogsDirectoryPath)
                     .Where(directory => Directory.GetLastWriteTime(directory) <= DateTime.Now.AddDays(-maxAgeDays))
                     .Each(directory => Directory.Delete(directory, true));
             }
