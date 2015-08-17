@@ -29,6 +29,6 @@ namespace RSG
         /// <summary>
         /// Function to configure the log specific for the app. Can be null if not required.
         /// </summary>
-        Action<LoggerConfiguration> ConfigureLog { get; }
+        void ConfigureLog(LoggerConfiguration loggerConfig);
     }
 }

@@ -190,10 +190,7 @@ namespace RSG
                 .WriteTo.Trace()
                 .Enrich.With(new RSGLogEnricher(appConfigurator));
 
-            if (appConfigurator.ConfigureLog != null)
-            {
-                appConfigurator.ConfigureLog(loggerConfig);
-            }
+            appConfigurator.ConfigureLog(loggerConfig);
 
             if (logsDirectoryStatus == LogsDirectoryStatus.Created)
             {
