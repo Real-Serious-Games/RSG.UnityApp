@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,5 +25,10 @@ namespace RSG
         /// The minor version number of the app.
         /// </summary>
         int MinorVersionNumber { get; }
+
+        /// <summary>
+        /// Function to configure the log specific for the app. Can be null if not required.
+        /// </summary>
+        Action<LoggerConfiguration> ConfigureLog { get; }
     }
 }

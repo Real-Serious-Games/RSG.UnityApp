@@ -190,6 +190,11 @@ namespace RSG
                 .WriteTo.Trace()
                 .Enrich.With(new RSGLogEnricher(appConfigurator));
 
+            if (appConfigurator.ConfigureLog != null)
+            {
+                appConfigurator.ConfigureLog(loggerConfig);
+            }
+
             if (logsDirectoryStatus == LogsDirectoryStatus.Created)
             {
                 loggerConfig.WriteTo.File(Path.Combine(LogsDirectoryPath, "Errors.log"), LogEventLevel.Error);
@@ -213,7 +218,7 @@ namespace RSG
             {
                 loggerConfig.WriteTo.Sink((Serilog.Core.ILogEventSink)sinkType.GetConstructor(new Type[0]).Invoke(new object[0]));
             }
-
+            
             InitDeviceId();
 
             var logger = new SerilogLogger(loggerConfig.CreateLogger());
