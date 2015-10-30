@@ -40,6 +40,11 @@ namespace RSG
         /// Game object is parented under the 'procedural game object parent'.
         /// </summary>
         GameObject CreatePermanent(string name);
+
+        /// <summary>
+        /// Load a game object using Unity's resource API
+        /// </summary>
+        GameObject Load(string newGameObjectName, string resourcePath);
     }
 
     /// <summary>
@@ -99,6 +104,24 @@ namespace RSG
             Argument.StringNotNullOrEmpty(() => name);
 
             return Create(name, GetProceduralRootObject());
+        }
+
+        /// <summary>
+        /// Load a game object using Unity's resource API
+        /// </summary>
+        public GameObject Load(string newGameObjectName, string resourcePath)
+        {
+            Argument.StringNotNullOrEmpty(() => newGameObjectName);
+            Argument.StringNotNullOrEmpty(() => resourcePath);
+
+            var loadedObj = Resources.Load(resourcePath);
+
+            if (loadedObj == null)
+            {
+                throw new ApplicationException("Failed to load assets from path: " + resourcePath);
+            }
+
+            return Instantiate(newGameObjectName, (GameObject)loadedObj);
         }
 
         /// <summary>
