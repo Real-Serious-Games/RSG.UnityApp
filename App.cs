@@ -240,6 +240,7 @@ namespace RSG
             var factory = new Factory("App", logger, reflection);
             factory.Dep<RSG.Utils.ILogger>(logger);
             var dispatcher = new Dispatcher(logger);
+            this.Dispatcher = dispatcher;
             factory.Dep<IDispatcher>(dispatcher);
             factory.Dep<IDispatchQueue>(dispatcher);            
             factory.Dep<ISceneQuery>(new SceneQuery());
@@ -575,6 +576,13 @@ namespace RSG
             private set;
         }
 
-
+        /// <summary>
+        /// Used to schedule code onto the main thread.
+        /// </summary>
+        public IDispatcher Dispatcher
+        {
+            get;
+            private set;
+        }
     }
 }
