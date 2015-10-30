@@ -28,6 +28,11 @@ namespace RSG
         RSG.Utils.ILogger Logger { get; }
 
         /// <summary>
+        /// Used to schedule code onto the main thread.
+        /// </summary>
+        IDispatcher Dispatcher { get; }
+
+        /// <summary>
         /// The name of the device assigned by the application.
         /// </summary>
         void SetDeviceName(string newDeviceName);
