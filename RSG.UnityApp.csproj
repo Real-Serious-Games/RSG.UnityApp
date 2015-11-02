@@ -43,8 +43,9 @@
       <HintPath>packages\RSG.SceneQuery.1.0.6.0\lib\net35\RSG.SceneQuery.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RSG.Toolkit">
-      <HintPath>packages\RSG.Toolkit.1.0.0.0\lib\net35\RSG.Toolkit.dll</HintPath>
+    <Reference Include="RSG.Toolkit, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\RSG.Toolkit.1.0.1.0\lib\net35\RSG.Toolkit.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Serilog">
       <HintPath>dlls\Serilog.dll</HintPath>

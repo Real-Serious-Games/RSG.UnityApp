@@ -38,9 +38,9 @@
       <HintPath>..\packages\Moq.4.2.1510.2205\lib\net35\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RSG.Toolkit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RSG.Toolkit.1.0.0.0\lib\net35\RSG.Toolkit.dll</HintPath>
+    <Reference Include="RSG.Toolkit, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RSG.Toolkit.1.0.1.0\lib\net35\RSG.Toolkit.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
