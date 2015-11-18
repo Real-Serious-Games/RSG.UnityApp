@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="RSG.Factory, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\RSG.Factory.1.1.1.0\lib\net35\RSG.Factory.dll</HintPath>
+    <Reference Include="RSG.Factory, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\RSG.Factory.1.1.2.0\lib\net35\RSG.Factory.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="RSG.Promise, Version=1.1.7.0, Culture=neutral, processorArchitecture=MSIL">
