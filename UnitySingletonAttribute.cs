@@ -26,6 +26,14 @@ namespace RSG
         {
         }
 
+        /// <summary>
+        /// Set up a UnitySingleton for a specified type and platform.
+        /// </summary>
+        public UnitySingletonAttribute(Type interfaceType, params RuntimePlatform[] supportedPlatforms) :
+            base(interfaceType, () => supportedPlatforms.Contains(Application.platform))
+        {
+        }
+
         public override object CreateInstance(IFactory factory, Type type)
         {
             Argument.NotNull(() => factory);
