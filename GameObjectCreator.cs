@@ -51,7 +51,7 @@ namespace RSG
     /// Interface for procedural creation and management of game objects.
     /// All procedural game objects are automatically cleaned up on shutdown.
     /// </summary>
-    [Singleton(typeof(GameObjectCreator))]
+    [Singleton(typeof(IGameObjectCreator))]
     public class GameObjectCreator : IGameObjectCreator, IStartable
     {
         private static readonly string ProceduralGameObjectsRootName = "_Procedural";
