@@ -89,11 +89,6 @@ namespace RSG
         private static readonly string SystemReportsPath = "System";
 
         /// <summary>
-        /// Interface that can be implemented by user's of the library to pass in settings to RSG.UnityApp.
-        /// </summary>
-        private IAppConfigurator appConfigurator;
-
-        /// <summary>
         /// Accessor for the singleton app instance.
         /// </summary>
         public static IApp Instance { get; private set; }
@@ -186,8 +181,6 @@ namespace RSG
         public App(IAppConfigurator appConfigurator)
         {
             Argument.NotNull(() => appConfigurator);
-
-            this.appConfigurator = appConfigurator;
 
             CreateLogsDirectory();
 
