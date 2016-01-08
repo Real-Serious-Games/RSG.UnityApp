@@ -9,6 +9,7 @@ using Serilog.Events;
 using System.IO;
 using RSG.Scene.Query;
 using Newtonsoft.Json;
+using RSG.UnityApp.Internal;
 
 namespace RSG
 {
@@ -235,7 +236,9 @@ namespace RSG
 
             DeleteOldLogFiles();
 
-            var factory = new Factory("App", logger, reflection);
+            var factoryLogger = new DebugLogger();
+
+            var factory = new Factory("App", factoryLogger, reflection);
             factory.Dep<RSG.Utils.ILogger>(logger);
             var dispatcher = new Dispatcher(logger);
             this.Dispatcher = dispatcher;

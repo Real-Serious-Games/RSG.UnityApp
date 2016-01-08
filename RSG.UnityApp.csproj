@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="AppHub.cs" />
+    <Compile Include="DebugLogger.cs" />
     <Compile Include="Dispatcher.cs" />
     <Compile Include="IAppConfigurator.cs" />
     <Compile Include="SettingsLoader.cs" />
