@@ -26,8 +26,8 @@ namespace RSG
 
         public LogSystemInfo(RSG.Utils.ILogger logger, string reportsPath)
         {
-            Argument.NotNull(() => logger);
-            Argument.StringNotNullOrEmpty(() => reportsPath);
+            RSG.Utils.Argument.NotNull(() => logger);
+            RSG.Utils.Argument.StringNotNullOrEmpty(() => reportsPath);
 
             this.logger = logger;
             this.reportsPath = reportsPath;
@@ -51,14 +51,6 @@ namespace RSG
                 logger.LogError(ex, "Failed to create system reports path.");
             }
 
-            var systemReportFile = Path.Combine(reportsPath, "Unity - System Info.txt");
-
-            var fileLoggerConfig = new LoggerConfiguration()
-                .WriteTo.File(systemReportFile, Serilog.Events.LogEventLevel.Debug)
-                .Enrich.With(new RSGLogEnricher(appConfigurator));
-            var fileLogger = new SerilogLogger(fileLoggerConfig.CreateLogger());
-            var reportLogger = new MultiLogger(logger, fileLogger);
-
             if (Application.platform == RuntimePlatform.WindowsPlayer)
             {
                 var outputPath = Path.Combine(reportsPath, "dxdiag.txt");
@@ -73,8 +65,6 @@ namespace RSG
                     logger.LogError(ex, "Failed to run dxdiag");
                 }
             }
-
-            logger.LogInfo("Saving system report to {SystemReportPath}", systemReportFile);
 
             try
             {
@@ -150,14 +140,13 @@ namespace RSG
                 )
                 .ToArray();
 
-                reportLogger.LogInfo(msg, msgParams);
+                logger.LogInfo(msg, msgParams);
             }
             catch (Exception ex)
             {
-                reportLogger.LogError(ex, "Failed to get Unity system info");
+                logger.LogError(ex, "Failed to get Unity system info");
             }
         }
-
 
         public static readonly string msgTemplate = 
             "=== Unity System Information ===\r\n" +

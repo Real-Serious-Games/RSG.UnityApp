@@ -37,11 +37,6 @@ namespace RSG
         /// The name of the device assigned by the application.
         /// </summary>
         void SetDeviceName(string newDeviceName);
-
-        /// <summary>
-        /// The logs directory for this application instance.
-        /// </summary>
-        string LogsDirectoryPath { get; }
     }
 
     /// <summary>
@@ -60,61 +55,9 @@ namespace RSG
         public static readonly string AppHubObjectName = "_AppHub";
 
         /// <summary>
-        /// Records the status of the logs directory.
-        /// </summary>
-        private enum LogsDirectoryStatus
-        {
-            Unknown,
-            Created,
-            Failed,
-        }
-
-        /// <summary>
-        /// Records the status of the logs directory.
-        /// </summary>
-        private LogsDirectoryStatus logsDirectoryStatus = LogsDirectoryStatus.Unknown;
-
-        /// <summary>
-        /// Records an exception, if any thrown, during creation of logs directory.
-        /// </summary>
-        private Exception logsDirectoryCreateException;
-
-        /// <summary>
-        /// Location to save reports to.
-        /// </summary>
-        private static readonly string LogsDirectoryName = "Logs";
-
-        /// <summary>
-        /// Location to save system reports to.
-        /// </summary>
-        private static readonly string SystemReportsPath = "System";
-
-        /// <summary>
         /// Accessor for the singleton app instance.
         /// </summary>
         public static IApp Instance { get; private set; }
-
-        /// <summary>
-        /// The logs directory for this application instance.
-        /// </summary>
-        public string LogsDirectoryPath
-        {
-            get
-            {
-                return Path.Combine(GlobalLogsDirectoryPath, AppInstanceID);
-            }
-        }
-
-        /// <summary>
-        /// Directory where subdirectories for application instance log files are stored.
-        /// </summary>
-        private string GlobalLogsDirectoryPath
-        {
-            get
-            {
-                return Path.Combine(Application.persistentDataPath, LogsDirectoryName);
-            }
-        }
 
         /// <summary>
         /// The path to where persistant device info is stored.
@@ -153,101 +96,49 @@ namespace RSG
         /// <summary>
         /// Initialize the app. Can be called multiple times.
         /// </summary>
-        public static void Init(IAppConfigurator appConfigurator)
+        public static void Init()
         {
-            Argument.NotNull(() => appConfigurator);
-
             if (Instance != null)
             {
                 // Already initialised.
                 return;
             }
 
-            Instance = new App(appConfigurator);
+            Instance = new App();
         }
 
         /// <summary>
         /// Resolve dependencies on a specific object, first ensuring that the application has been initialized.
         /// </summary>
-        public static void ResolveDependencies(object obj, IAppConfigurator appConfigurator)
+        public static void ResolveDependencies(object obj)
         {
             Argument.NotNull(() => obj);
-            Argument.NotNull(() => appConfigurator);
 
-            Init(appConfigurator);
+            Init();
 
             Instance.Factory.ResolveDependencies(obj);
         }
 
-        public App(IAppConfigurator appConfigurator)
+        public App()
         {
-            Argument.NotNull(() => appConfigurator);
-
-            CreateLogsDirectory();
-
-            var loggerConfig = new Serilog.LoggerConfiguration()
-                .WriteTo.Trace()
-                .Enrich.With(new RSGLogEnricher(appConfigurator));
-
-            appConfigurator.ConfigureLog(loggerConfig);
-
-            if (logsDirectoryStatus == LogsDirectoryStatus.Created)
-            {
-                loggerConfig.WriteTo.File(Path.Combine(LogsDirectoryPath, "Errors.log"), LogEventLevel.Error);
-                loggerConfig.WriteTo.File(Path.Combine(LogsDirectoryPath, "Info.log"), LogEventLevel.Information);
-                loggerConfig.WriteTo.File(Path.Combine(LogsDirectoryPath, "Verbose.log"), LogEventLevel.Verbose);
-            }
-
-            if (!string.IsNullOrEmpty(appConfigurator.LogPostUrl))
-            {
-                Debug.Log("Sending log messages via HTTP to " + appConfigurator.LogPostUrl);
-
-                loggerConfig.WriteTo.Sink(new SerilogHttpSink(appConfigurator.LogPostUrl));
-            }
-            else
-            {
-                Debug.Log("Not sending log messages via HTTP");
-            }
-
-            var reflection = new Reflection();
-            foreach (var sinkType in reflection.FindTypesMarkedByAttributes(LinqExts.FromItems(typeof(SerilogSinkAttribute))))
-            {
-                loggerConfig.WriteTo.Sink((Serilog.Core.ILogEventSink)sinkType.GetConstructor(new Type[0]).Invoke(new object[0]));
-            }
-            
-            InitDeviceId();
-
-            var logger = new SerilogLogger(loggerConfig.CreateLogger());
-            this.Logger = logger;
-            logger.LogInfo("Application started at {TimeNow}", DateTime.Now);
-            logger.LogInfo("Logs directory status: {LogsDirectoryStatus}", logsDirectoryStatus);
-            if (logsDirectoryStatus == LogsDirectoryStatus.Failed)
-            {
-                logger.LogError(logsDirectoryCreateException, "Failed to create logs directory {LogsDirectoryPath}", LogsDirectoryPath);                
-            }
-            else
-            {
-                logger.LogInfo("Writing logs and reports to {LogsDirectoryPath}", LogsDirectoryPath);
-            }
-
-            LogSystemInfo(logger, appConfigurator);
-
             InitRunningFile();
 
-            DeleteOldLogFiles();
+            InitDeviceId();
+
 
             var factoryLogger = new DebugLogger();
 
+            var reflection = new Reflection();
             var factory = new Factory("App", factoryLogger, reflection);
-            factory.Dep<RSG.Utils.ILogger>(logger);
-            var dispatcher = new Dispatcher(logger);
+            factory.Dep<RSG.Utils.ILogger>(factoryLogger);
+            var dispatcher = new Dispatcher(factoryLogger);
             this.Dispatcher = dispatcher;
             factory.Dep<IDispatcher>(dispatcher);
             factory.Dep<IDispatchQueue>(dispatcher);            
             factory.Dep<ISceneQuery>(new SceneQuery());
             factory.Dep<ISceneTraversal>(new SceneTraversal());
 
-            var singletonManager = InitFactory(logger, factory, reflection);
+            var singletonManager = InitFactory(factoryLogger, factory, reflection);
 
             this.Factory = factory;
 
@@ -262,25 +153,6 @@ namespace RSG
 
                     DeleteRunningFile();
                 };
-
-            // Initialize errors for unhandled promises.
-            Promise.UnhandledException += (s, e) => logger.LogError(e.Exception, "Unhandled error from promise.");
-
-            Application.RegisterLogCallbackThreaded((msg, stackTrace, type) =>
-            {
-                if (!msg.StartsWith(SerilogUnitySink.RSGLogTag))
-                {
-                    switch (type)
-                    {
-                        case LogType.Assert:        
-                        case LogType.Error:
-                        case LogType.Exception:     logger.LogError(msg + "\r\nStack:\r\n{StackTrace}", stackTrace); break;
-                        case LogType.Warning:       logger.LogWarning(msg + "\r\nStack:\r\n{StackTrace}", stackTrace); break;
-                        default:                    logger.LogInfo(msg + "\r\nStack:\r\n{StackTrace}", stackTrace); break;
-                    }
-                }
-                                    
-            });
         }
 
         /// <summary>
@@ -460,64 +332,6 @@ namespace RSG
                 Debug.LogException(ex);
 
                 return false;
-            }
-        }
-
-        /// <summary>
-        /// Dump out system info.
-        /// </summary>
-        private void LogSystemInfo(RSG.Utils.ILogger logger, IAppConfigurator appConfigurator)
-        {
-            var systemReportsPath = Path.Combine(LogsDirectoryPath, SystemReportsPath);
-            var logSystemInfo = new LogSystemInfo(logger, systemReportsPath);
-            logSystemInfo.Output(appConfigurator);
-        }
-
-        /// <summary>
-        /// Create the application's logs directory.
-        /// </summary>
-        private void CreateLogsDirectory()
-        {
-            try
-            {
-                var logsPath = Path.Combine(Application.persistentDataPath, LogsDirectoryName);
-                if (!Directory.Exists(logsPath))
-                {
-                    Directory.CreateDirectory(logsPath);
-                }
-
-                var appLogsPath = Path.Combine(logsPath, AppInstanceID);
-                if (!Directory.Exists(appLogsPath))
-                {
-                    Directory.CreateDirectory(appLogsPath);
-                }
-
-                logsDirectoryStatus = LogsDirectoryStatus.Created;                
-            }
-            catch (Exception ex)
-            {
-                logsDirectoryStatus = LogsDirectoryStatus.Failed;
-                logsDirectoryCreateException = ex;
-            }
-        }
-
-        /// <summary>
-        /// Removes log files more than a month old.
-        /// </summary>
-        private void DeleteOldLogFiles()
-        {
-            const int maxAgeDays = 30;
-
-            try
-            {
-                Directory
-                    .GetDirectories(GlobalLogsDirectoryPath)
-                    .Where(directory => Directory.GetLastWriteTime(directory) <= DateTime.Now.AddDays(-maxAgeDays))
-                    .Each(directory => Directory.Delete(directory, true));
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Error deleting old log files.");
             }
         }
 
