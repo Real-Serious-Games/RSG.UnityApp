@@ -121,10 +121,7 @@ namespace RSG
 
         public App()
         {
-            InitRunningFile();
-
             InitDeviceId();
-
 
             var factoryLogger = new DebugLogger();
 
@@ -143,6 +140,11 @@ namespace RSG
             this.Factory = factory;
 
             singletonManager.InstantiateSingletons(factory);
+
+            this.Logger = factory.ResolveDep<RSG.Utils.ILogger>();
+
+            InitRunningFile();
+
             singletonManager.Startup();
 
             var appHub = InitAppHub();
