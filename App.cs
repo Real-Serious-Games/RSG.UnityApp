@@ -34,6 +34,11 @@ namespace RSG
         IDispatcher Dispatcher { get; }
 
         /// <summary>
+        /// Get the global promise timer.
+        /// </summary>
+        IPromiseTimer PromiseTimer { get; }
+
+        /// <summary>
         /// The name of the device assigned by the application.
         /// </summary>
         void SetDeviceName(string newDeviceName);
@@ -134,6 +139,8 @@ namespace RSG
             factory.Dep<IDispatchQueue>(dispatcher);            
             factory.Dep<ISceneQuery>(new SceneQuery());
             factory.Dep<ISceneTraversal>(new SceneTraversal());
+            this.PromiseTimer = new PromiseTimer();
+            factory.Dep<IPromiseTimer>(this.PromiseTimer);
 
             var singletonManager = InitFactory(factoryLogger, factory, reflection);
 
@@ -401,5 +408,15 @@ namespace RSG
             get;
             private set;
         }
+
+        /// <summary>
+        /// Get the global promise timer.
+        /// </summary>
+        public IPromiseTimer PromiseTimer 
+        { 
+            get;
+            private set;
+        }
+
     }
 }

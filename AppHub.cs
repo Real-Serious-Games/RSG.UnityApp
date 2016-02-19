@@ -20,6 +20,9 @@ namespace RSG
         public IDispatchQueue DispatchQueue { get; set; }
 
         [Dependency]
+        public IPromiseTimer PromiseTimer { get; set;  }
+
+        [Dependency]
         public ILogger Logger { get; set; }
 
         /// <summary>
@@ -47,6 +50,8 @@ namespace RSG
             SerilogHttpSink.SendBatch();
 
             DispatchQueue.ExecutePending();
+
+            PromiseTimer.Update(Time.deltaTime);
 
             TaskManager.Update(Time.deltaTime);
         }
