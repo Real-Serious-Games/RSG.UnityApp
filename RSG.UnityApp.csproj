@@ -38,9 +38,9 @@
     <Reference Include="RSG.Metrics">
       <HintPath>packages\RSG.Metrics.1.0.0.0\lib\net35\RSG.Metrics.dll</HintPath>
     </Reference>
-    <Reference Include="RSG.Promise, Version=1.1.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\RSG.Promise.1.1.7.0\lib\net35\RSG.Promise.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="RSG.Promise, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\RSG.Promise.1.2.0.0\lib\net35\RSG.Promise.dll</HintPath>
     </Reference>
     <Reference Include="RSG.SceneQuery, Version=1.0.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\RSG.SceneQuery.1.0.6.0\lib\net35\RSG.SceneQuery.dll</HintPath>
