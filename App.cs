@@ -76,6 +76,22 @@ namespace RSG
         }
 
         /// <summary>
+        /// The path to where log configuration is stored.
+        /// </summary>
+        private string LogConfigFilePath
+        {
+            get
+            {
+#if UNITY_ANDROID
+                return Path.Combine(Application.persistentDataPath, "LogInfo.json");
+#else
+                return Path.Combine(Application.dataPath, "LogInfo.json");
+#endif
+            }
+        }
+
+
+        /// <summary>
         /// Path where the 'running file' is saved. This is a file that is present when the app is running and
         /// allows unclean shutdown to be detected.
         /// </summary>
@@ -128,12 +144,12 @@ namespace RSG
         {
             InitDeviceId();
 
-            var factoryLogger = new DebugLogger();
+            var logger = new SerilogLogger(LoadLogConfig());
 
             var reflection = new Reflection();
-            var factory = new Factory("App", factoryLogger, reflection);
-            factory.Dep<RSG.Utils.ILogger>(factoryLogger);
-            var dispatcher = new Dispatcher(factoryLogger);
+            var factory = new Factory("App", logger, reflection);
+            factory.Dep<RSG.Utils.ILogger>(logger);
+            var dispatcher = new Dispatcher(logger);
             this.Dispatcher = dispatcher;
             factory.Dep<IDispatcher>(dispatcher);
             factory.Dep<IDispatchQueue>(dispatcher);            
@@ -142,7 +158,7 @@ namespace RSG
             this.PromiseTimer = new PromiseTimer();
             factory.Dep<IPromiseTimer>(this.PromiseTimer);
 
-            var singletonManager = InitFactory(factoryLogger, factory, reflection);
+            var singletonManager = InitFactory(logger, factory, reflection);
 
             this.Factory = factory;
 
@@ -341,6 +357,34 @@ namespace RSG
                 Debug.LogException(ex);
 
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Load logger configuration from a file.
+        /// </summary>
+        private LogConfig LoadLogConfig()
+        {
+            //
+            // Load log configuraiton.
+            //
+            if (!File.Exists(LogConfigFilePath))
+            {
+                return new LogConfig();
+            }
+
+            Debug.Log("Loading device info file: " + LogConfigFilePath);
+
+            try
+            {
+                return JsonConvert.DeserializeObject<LogConfig>(File.ReadAllText(LogConfigFilePath));
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Failed to load log configuration file: " + LogConfigFilePath);
+                Debug.LogException(ex);
+
+                return new LogConfig();
             }
         }
 

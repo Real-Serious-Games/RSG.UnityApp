@@ -36,7 +36,7 @@ namespace RSG
         /// <summary>
         /// Log system information.
         /// </summary>
-        public void Output(IAppConfigurator appConfigurator)
+        public void Output()
         {
             try
             {

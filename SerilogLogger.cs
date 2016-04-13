@@ -10,7 +10,6 @@ using UnityEngine;
 
 namespace RSG
 {
-    [Singleton(typeof(RSG.Utils.ILogger))]
     public class SerilogLogger : RSG.Utils.ILogger
     {
         /// <summary>
@@ -23,17 +22,15 @@ namespace RSG
         /// </summary>
         public bool EnableVerbose { get; set; }
 
-        public SerilogLogger(IAppConfigurator appConfigurator)
+        public SerilogLogger(LogConfig logConfig)
         {
-            Argument.NotNull(() => appConfigurator);
+            Argument.NotNull(() => logConfig);
 
             CreateLogsDirectory();
 
             var loggerConfig = new Serilog.LoggerConfiguration()
                 .WriteTo.Trace()
-                .Enrich.With(new RSGLogEnricher(appConfigurator));
-
-            appConfigurator.ConfigureLog(loggerConfig);
+                .Enrich.With(new RSGLogEnricher());
 
             if (logsDirectoryStatus == LogsDirectoryStatus.Created)
             {
@@ -42,11 +39,11 @@ namespace RSG
                 loggerConfig.WriteTo.File(Path.Combine(LogsDirectoryPath, "Verbose.log"), LogEventLevel.Verbose);
             }
 
-            if (!string.IsNullOrEmpty(appConfigurator.LogPostUrl))
+            if (!string.IsNullOrEmpty(logConfig.LogPostUrl))
             {
-                Debug.Log("Sending log messages via HTTP to " + appConfigurator.LogPostUrl);
+                Debug.Log("Sending log messages via HTTP to " + logConfig.LogPostUrl);
 
-                loggerConfig.WriteTo.Sink(new SerilogHttpSink(appConfigurator.LogPostUrl));
+                loggerConfig.WriteTo.Sink(new SerilogHttpSink(logConfig.LogPostUrl));
             }
             else
             {
@@ -72,7 +69,7 @@ namespace RSG
                 LogInfo("Writing logs and reports to {LogsDirectoryPath}", LogsDirectoryPath);
             }
 
-            LogSystemInfo(appConfigurator);
+            LogSystemInfo();
 
             DeleteOldLogFiles();
 
@@ -218,11 +215,11 @@ namespace RSG
         /// <summary>
         /// Dump out system info.
         /// </summary>
-        private void LogSystemInfo(IAppConfigurator appConfigurator)
+        private void LogSystemInfo()
         {
             var systemReportsPath = Path.Combine(LogsDirectoryPath, SystemReportsPath);
             var logSystemInfo = new LogSystemInfo(this, systemReportsPath);
-            logSystemInfo.Output(appConfigurator);
+            logSystemInfo.Output();
         }
 
         /// <summary>
