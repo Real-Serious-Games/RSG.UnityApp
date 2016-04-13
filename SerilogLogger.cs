@@ -22,15 +22,24 @@ namespace RSG
         /// </summary>
         public bool EnableVerbose { get; set; }
 
-        public SerilogLogger(LogConfig logConfig)
+        public SerilogLogger(LogConfig logConfig, IReflection reflection)
         {
             Argument.NotNull(() => logConfig);
+            Argument.NotNull(() => reflection);
 
             CreateLogsDirectory();
 
             var loggerConfig = new Serilog.LoggerConfiguration()
-                .WriteTo.Trace()
-                .Enrich.With(new RSGLogEnricher());
+                .WriteTo.Trace();
+
+            var emptyTypeArray = new Type[0];
+            var emptyObjectArray = new object[0];
+
+            var logEnrichers = reflection.FindTypesMarkedByAttributes(LinqExts.FromItems(typeof(LogEnricherAttribute)));
+            loggerConfig = logEnrichers
+                .Select(logEnricherType => logEnricherType.GetConstructor(emptyTypeArray).Invoke(emptyObjectArray))
+                .Cast<Serilog.Core.ILogEventEnricher>()
+                .Aggregate(loggerConfig, (prevLoggerConfig, logEnricher) => prevLoggerConfig.Enrich.With(logEnricher));
 
             if (logsDirectoryStatus == LogsDirectoryStatus.Created)
             {
@@ -50,10 +59,9 @@ namespace RSG
                 Debug.Log("Not sending log messages via HTTP");
             }
 
-            var reflection = new Reflection();
             foreach (var sinkType in reflection.FindTypesMarkedByAttributes(LinqExts.FromItems(typeof(SerilogSinkAttribute))))
             {
-                loggerConfig.WriteTo.Sink((Serilog.Core.ILogEventSink)sinkType.GetConstructor(new Type[0]).Invoke(new object[0]));
+                loggerConfig.WriteTo.Sink((Serilog.Core.ILogEventSink)sinkType.GetConstructor(emptyTypeArray).Invoke(emptyObjectArray));
             }
 
             this.serilog = loggerConfig.CreateLogger();

@@ -11,6 +11,7 @@ namespace RSG
     /// <summary>
     /// Adds extra details to log messages.
     /// </summary>
+    [LogEnricher]
     public class RSGLogEnricher : ILogEventEnricher
     {
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)

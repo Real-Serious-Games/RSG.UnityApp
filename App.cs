@@ -144,9 +144,9 @@ namespace RSG
         {
             InitDeviceId();
 
-            var logger = new SerilogLogger(LoadLogConfig());
-
             var reflection = new Reflection();
+            var logger = new SerilogLogger(LoadLogConfig(), reflection);
+
             var factory = new Factory("App", logger, reflection);
             factory.Dep<RSG.Utils.ILogger>(logger);
             var dispatcher = new Dispatcher(logger);
