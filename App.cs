@@ -148,6 +148,7 @@ namespace RSG
             var logger = new SerilogLogger(LoadLogConfig(), reflection);
 
             var factory = new Factory("App", logger, reflection);
+            factory.Dep<IApp>(this);
             factory.Dep<RSG.Utils.ILogger>(logger);
             var dispatcher = new Dispatcher(logger);
             this.Dispatcher = dispatcher;
@@ -366,14 +367,14 @@ namespace RSG
         private LogConfig LoadLogConfig()
         {
             //
-            // Load log configuraiton.
+            // Load log configuration.
             //
             if (!File.Exists(LogConfigFilePath))
             {
                 return new LogConfig();
             }
 
-            Debug.Log("Loading device info file: " + LogConfigFilePath);
+            Debug.Log("Loading log configuration file: " + LogConfigFilePath);
 
             try
             {
