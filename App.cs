@@ -475,5 +475,13 @@ namespace RSG
             private set;
         }
 
+        /// <summary>
+        /// Global singleton manager.
+        /// </summary>
+        public ISingletonManager SingletonManager
+        {
+            get;
+            private set;
+        }
     }
 }
