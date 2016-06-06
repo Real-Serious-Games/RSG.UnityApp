@@ -39,6 +39,11 @@ namespace RSG
         IPromiseTimer PromiseTimer { get; }
 
         /// <summary>
+        /// Global singleton manager.
+        /// </summary>
+        ISingletonManager SingletonManager { get; }
+
+        /// <summary>
         /// The name of the device assigned by the application.
         /// </summary>
         void SetDeviceName(string newDeviceName);
@@ -159,23 +164,30 @@ namespace RSG
             this.PromiseTimer = new PromiseTimer();
             factory.Dep<IPromiseTimer>(this.PromiseTimer);
 
-            var singletonManager = InitFactory(logger, factory, reflection);
+            this.SingletonManager = InitFactory(logger, factory, reflection);
 
             this.Factory = factory;
 
-            singletonManager.InstantiateSingletons(factory);
+            SingletonManager.InstantiateSingletons(factory);
 
             this.Logger = factory.ResolveDep<RSG.Utils.ILogger>();
 
             InitRunningFile();
 
-            singletonManager.Startup();
+            SingletonManager.Startup();
+
+            var taskManager = factory.ResolveDep<ITaskManager>();
+            SingletonManager.Singletons.ForType((IUpdatable u) => taskManager.RegisterUpdatable(u));
+            SingletonManager.Singletons.ForType((IRenderable r) => taskManager.RegisterRenderable(r));
 
             var appHub = InitAppHub();
             appHub.Shutdown = 
                 () =>
                 {
-                    singletonManager.Shutdown();
+                    SingletonManager.Shutdown();
+
+                    SingletonManager.Singletons.ForType((IUpdatable u) => taskManager.UnregisterUpdatable(u));
+                    SingletonManager.Singletons.ForType((IRenderable r) => taskManager.UnregisterRenderable(r));
 
                     DeleteRunningFile();
                 };
