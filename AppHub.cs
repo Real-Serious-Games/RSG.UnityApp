@@ -35,9 +35,11 @@ namespace RSG
         /// </summary>
         public Action Shutdown { get; set; }
 
-        private void Start()
+        private IEnumerator Start()
         {
             App.Instance.Factory.ResolveDependencies(this);
+
+            yield return StartCoroutine(EndOfFrame());
         }
 
         protected void Update()
