@@ -27,10 +27,18 @@ namespace RSG
             Argument.NotNull(() => logConfig);
             Argument.NotNull(() => reflection);
 
+            this.EnableVerbose = logConfig.Verbose;
+
             CreateLogsDirectory();
 
-            var loggerConfig = new Serilog.LoggerConfiguration()
-                .WriteTo.Trace();
+            var loggerConfig = new Serilog.LoggerConfiguration();
+
+            if (this.EnableVerbose)
+            {
+                loggerConfig = loggerConfig.MinimumLevel.Verbose();
+            }
+
+            loggerConfig = loggerConfig.WriteTo.Trace();
 
             var emptyTypeArray = new Type[0];
             var emptyObjectArray = new object[0];
@@ -75,6 +83,15 @@ namespace RSG
             else
             {
                 LogInfo("Writing logs and reports to {LogsDirectoryPath}", LogsDirectoryPath);
+            }
+
+            if (this.EnableVerbose)
+            {
+                LogInfo("Verbose logging is enabled.");
+            }
+            else
+            {
+                LogInfo("Verbose logging is not enabled.");
             }
 
             LogSystemInfo();

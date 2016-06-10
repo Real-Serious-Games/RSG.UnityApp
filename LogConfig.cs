@@ -14,5 +14,10 @@ namespace RSG
         /// URL used to HTTP post log messages (or null to disable HTTP post).
         /// </summary>
         public string LogPostUrl { get; set; }
+
+        /// <summary>
+        /// Set to true to enable verbose logging.
+        /// </summary>
+        public bool Verbose { get; set; }
     }
 }
