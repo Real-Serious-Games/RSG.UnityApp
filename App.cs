@@ -179,6 +179,8 @@ namespace RSG
             var taskManager = factory.ResolveDep<ITaskManager>();
             SingletonManager.Singletons.ForType((IUpdatable u) => taskManager.RegisterUpdatable(u));
             SingletonManager.Singletons.ForType((IRenderable r) => taskManager.RegisterRenderable(r));
+            SingletonManager.Singletons.ForType((IEndOfFrameUpdatable u) => taskManager.RegisterEndOfFrameUpdatable(u));
+            SingletonManager.Singletons.ForType((ILateUpdatable u) => taskManager.RegisterLateUpdatable(u));
 
             var appHub = InitAppHub();
             appHub.Shutdown = 
@@ -188,6 +190,8 @@ namespace RSG
 
                     SingletonManager.Singletons.ForType((IUpdatable u) => taskManager.UnregisterUpdatable(u));
                     SingletonManager.Singletons.ForType((IRenderable r) => taskManager.UnregisterRenderable(r));
+                    SingletonManager.Singletons.ForType((IEndOfFrameUpdatable u) => taskManager.UnregisterEndOfFrameUpdatable(u));
+                    SingletonManager.Singletons.ForType((ILateUpdatable u) => taskManager.UnregisterLateUpdatable(u));
 
                     DeleteRunningFile();
                 };
