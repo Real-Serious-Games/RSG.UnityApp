@@ -111,7 +111,7 @@ namespace RSG
 
             if (updatables.Contains(updatable))
             {
-                throw new ApplicationException("Updatable is already registered.");
+                throw new FormattedException("Updatable {TypeName} is already registered.", updatable.GetType().Name);
             }
 
             this.updatables.Add(updatable);
@@ -136,7 +136,7 @@ namespace RSG
 
             if (lateUpdatables.Contains(updatable))
             {
-                throw new ApplicationException("Late updatable is already registered.");
+                throw new FormattedException("Late updatable {TypeName} is already registered.", updatable.GetType().Name);
             }
 
             this.lateUpdatables.Add(updatable);
@@ -161,7 +161,7 @@ namespace RSG
 
             if (endOfFrameUpdatables.Contains(updatable))
             {
-                throw new ApplicationException("End-of-frame updatable is already registered.");
+                throw new FormattedException("End-of-frame updatable {TypeName} is already registered.", updatable.GetType().Name);
             }
 
             this.endOfFrameUpdatables.Add(updatable);
@@ -186,7 +186,7 @@ namespace RSG
 
             if (renderables.Contains(renderable))
             {
-                throw new ApplicationException("Renderable is already registered.");
+                throw new FormattedException("Renderable {TypeName} is already registered.", renderable.GetType().Name);
             }
 
             this.renderables.Add(renderable);
