@@ -130,7 +130,10 @@ namespace RSG
                 return;
             }
 
-            Instance = new App();
+            var app = new App();
+            Instance = app;
+
+            app.InitSingletons();
         }
 
         /// <summary>
@@ -158,7 +161,7 @@ namespace RSG
             var dispatcher = new Dispatcher(logger);
             this.Dispatcher = dispatcher;
             factory.Dep<IDispatcher>(dispatcher);
-            factory.Dep<IDispatchQueue>(dispatcher);            
+            factory.Dep<IDispatchQueue>(dispatcher);
             factory.Dep<ISceneQuery>(new SceneQuery());
             factory.Dep<ISceneTraversal>(new SceneTraversal());
             this.PromiseTimer = new PromiseTimer();
@@ -168,22 +171,25 @@ namespace RSG
 
             this.Factory = factory;
 
-            SingletonManager.InstantiateSingletons(factory);
-
             this.Logger = factory.ResolveDep<RSG.Utils.ILogger>();
 
             InitRunningFile();
+        }
+
+        private void InitSingletons()
+        {
+            SingletonManager.InstantiateSingletons(Factory);
 
             SingletonManager.Startup();
 
-            var taskManager = factory.ResolveDep<ITaskManager>();
+            var taskManager = Factory.ResolveDep<ITaskManager>();
             SingletonManager.Singletons.ForType((IUpdatable u) => taskManager.RegisterUpdatable(u));
             SingletonManager.Singletons.ForType((IRenderable r) => taskManager.RegisterRenderable(r));
             SingletonManager.Singletons.ForType((IEndOfFrameUpdatable u) => taskManager.RegisterEndOfFrameUpdatable(u));
             SingletonManager.Singletons.ForType((ILateUpdatable u) => taskManager.RegisterLateUpdatable(u));
 
             var appHub = InitAppHub();
-            appHub.Shutdown = 
+            appHub.Shutdown =
                 () =>
                 {
                     SingletonManager.Shutdown();
