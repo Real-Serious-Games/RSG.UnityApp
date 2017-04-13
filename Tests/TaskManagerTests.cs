@@ -26,7 +26,7 @@ namespace RSG.Tests
 
             testObject.RegisterUpdatable(mockUpdateable.Object);
 
-            Assert.Throws<ApplicationException>(() =>
+            Assert.Throws<FormattedException>(() =>
                 testObject.RegisterUpdatable(mockUpdateable.Object)
             );
         }
@@ -76,7 +76,7 @@ namespace RSG.Tests
 
             testObject.RegisterLateUpdatable(mockUpdateable.Object);
 
-            Assert.Throws<ApplicationException>(() =>
+            Assert.Throws<FormattedException>(() =>
                 testObject.RegisterLateUpdatable(mockUpdateable.Object)
             );
         }
@@ -127,7 +127,7 @@ namespace RSG.Tests
 
             testObject.RegisterEndOfFrameUpdatable(mockUpdateable.Object);
 
-            Assert.Throws<ApplicationException>(() =>
+            Assert.Throws<FormattedException>(() =>
                 testObject.RegisterEndOfFrameUpdatable(mockUpdateable.Object)
             );
         }
@@ -173,7 +173,7 @@ namespace RSG.Tests
 
             testObject.RegisterRenderable(mockRenderable.Object);
 
-            Assert.Throws<ApplicationException>(() =>
+            Assert.Throws<FormattedException>(() =>
                 testObject.RegisterRenderable(mockRenderable.Object)
             );
         }
