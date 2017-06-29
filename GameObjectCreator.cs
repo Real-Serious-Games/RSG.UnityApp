@@ -79,7 +79,7 @@ namespace RSG
             Argument.NotNull(() => parent);
 
             var gameObject = (GameObject)GameObject.Instantiate(source);
-            gameObject.transform.parent = parent.transform;
+            gameObject.transform.SetParent(parent.transform);
             return gameObject;
         }
 
@@ -92,7 +92,7 @@ namespace RSG
             Argument.NotNull(() => parent);
 
             var gameObject = new GameObject(name);
-            gameObject.transform.parent = parent.transform;
+            gameObject.transform.SetParent(parent.transform);
             return gameObject;
         }
 
@@ -155,7 +155,7 @@ namespace RSG
         {
             var parent = GetPermanentProceduralRootObject();
             var gameObject = new GameObject(name);
-            gameObject.transform.parent = parent.transform;
+            gameObject.transform.SetParent(parent.transform);
             gameObject.hideFlags = HideFlags.DontSave;
             GameObject.DontDestroyOnLoad(gameObject);
             return gameObject;
@@ -169,8 +169,10 @@ namespace RSG
             var parent = GameObject.Find(PermanentProceduralGameObjectsRootName);
             if (parent == null)
             {
-                parent = new GameObject(PermanentProceduralGameObjectsRootName);
-                parent.hideFlags = HideFlags.DontSave;
+                parent = new GameObject(PermanentProceduralGameObjectsRootName)
+                {
+                    hideFlags = HideFlags.DontSave
+                };
                 GameObject.DontDestroyOnLoad(parent);
             }
             return parent;
