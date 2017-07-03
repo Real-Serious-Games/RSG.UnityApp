@@ -40,8 +40,8 @@
     <Reference Include="RSG.Promise, Version=1.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\RSG.Promise.1.2.2.0\lib\net35\RSG.Promise.dll</HintPath>
     </Reference>
-    <Reference Include="RSG.SceneQuery, Version=1.0.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\RSG.SceneQuery.1.0.8.0\lib\net35\RSG.SceneQuery.dll</HintPath>
+    <Reference Include="RSG.SceneQuery, Version=1.0.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\RSG.SceneQuery.1.0.9\lib\net35\RSG.SceneQuery.dll</HintPath>
     </Reference>
     <Reference Include="RSG.Toolkit, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\RSG.Toolkit.1.0.1.0\lib\net35\RSG.Toolkit.dll</HintPath>
