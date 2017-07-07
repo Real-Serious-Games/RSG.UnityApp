@@ -80,6 +80,7 @@ namespace RSG
 
             var gameObject = (GameObject)GameObject.Instantiate(source);
             gameObject.transform.SetParent(parent.transform);
+            gameObject.name = name;
             return gameObject;
         }
 
