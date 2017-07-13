@@ -158,7 +158,6 @@ namespace RSG
             var gameObject = new GameObject(name);
             gameObject.transform.SetParent(parent.transform);
             gameObject.hideFlags = HideFlags.DontSave;
-            GameObject.DontDestroyOnLoad(gameObject);
             return gameObject;
         }
 
