@@ -52,6 +52,7 @@ namespace RSG
         public void LogInfo(string message, params object[] args)
         {
             factoryLogger.Information(message, args);
+            mainLogger.LogVerbose(message, args);
         }
 
         /// <summary>
@@ -60,6 +61,7 @@ namespace RSG
         public void LogVerbose(string message, params object[] args)
         {
             factoryLogger.Verbose(message, args);
+            mainLogger.LogVerbose(message, args);
         }
 
         /// <summary>
