@@ -2,15 +2,13 @@
 using Serilog;
 using Serilog.Events;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace RSG
 {
-    public class SerilogLogger : RSG.Utils.ILogger
+    public class SerilogLogger : Utils.ILogger
     {
         /// <summary>
         /// Serilog logger.
@@ -27,13 +25,13 @@ namespace RSG
             Argument.NotNull(() => logConfig);
             Argument.NotNull(() => reflection);
 
-            this.EnableVerbose = logConfig.Verbose;
+            EnableVerbose = logConfig.Verbose;
 
             CreateLogsDirectory();
 
-            var loggerConfig = new Serilog.LoggerConfiguration();
+            var loggerConfig = new LoggerConfiguration();
 
-            if (this.EnableVerbose)
+            if (EnableVerbose)
             {
                 loggerConfig = loggerConfig.MinimumLevel.Verbose();
             }
@@ -72,7 +70,7 @@ namespace RSG
                 loggerConfig.WriteTo.Sink((Serilog.Core.ILogEventSink)sinkType.GetConstructor(emptyTypeArray).Invoke(emptyObjectArray));
             }
 
-            this.serilog = loggerConfig.CreateLogger();
+            serilog = loggerConfig.CreateLogger();
 
             LogInfo("Application started at {TimeNow}", DateTime.Now);
             LogInfo("Logs directory status: {LogsDirectoryStatus}", logsDirectoryStatus);
@@ -85,7 +83,7 @@ namespace RSG
                 LogInfo("Writing logs and reports to {LogsDirectoryPath}", LogsDirectoryPath);
             }
 
-            if (this.EnableVerbose)
+            if (EnableVerbose)
             {
                 LogInfo("Verbose logging is enabled.");
             }
