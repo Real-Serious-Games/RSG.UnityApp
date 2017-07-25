@@ -153,7 +153,8 @@ namespace RSG
             InitDeviceId();
 
             var reflection = new Reflection();
-            var logger = new SerilogLogger(LoadLogConfig(), reflection);
+            var logConfig = LoadLogConfig();
+            var logger = new SerilogLogger(logConfig, reflection);
 
             var factory = new Factory("App", logger, reflection);
             factory.Dep<IApp>(this);
@@ -167,7 +168,8 @@ namespace RSG
             this.PromiseTimer = new PromiseTimer();
             factory.Dep<IPromiseTimer>(this.PromiseTimer);
 
-            this.SingletonManager = InitFactory(logger, factory, reflection);
+            var factoryLogger = new FactoryLogger(logger, logConfig.FactoryLogPath);
+            this.SingletonManager = InitFactory(factoryLogger, factory, reflection);
 
             this.Factory = factory;
 

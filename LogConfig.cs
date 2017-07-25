@@ -19,5 +19,10 @@ namespace RSG
         /// Set to true to enable verbose logging.
         /// </summary>
         public bool Verbose { get; set; }
+
+        /// <summary>
+        /// Log for the factory. Doesn't write a log file if null or empty string.
+        /// </summary>
+        public string FactoryLogPath { get; set; }
     }
 }
