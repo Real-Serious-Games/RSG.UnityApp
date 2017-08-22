@@ -421,7 +421,7 @@ namespace RSG
             //todo: all this code should merge into RSG.Factory.
             factory.AutoRegisterTypes();
 
-            var singletonManager = new SingletonManager(logger, factory);
+            var singletonManager = new SingletonManager(reflection, logger, factory);
 
             factory.Dep<IReflection>(reflection);
             factory.AddDependencyProvider(singletonManager);
