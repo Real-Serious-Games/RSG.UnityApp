@@ -1,10 +1,6 @@
-﻿using RSG;
 using RSG.Utils;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace RSG
@@ -262,8 +258,6 @@ namespace RSG
         /// </summary>
         private void StartLoading(string sceneName, string loadType)
         {
-            ExceptionIfLoading(sceneName);
-
             Logger.LogInfo("Loading scene (" + loadType + "): " + CurrentSceneName + " -> " + sceneName);
 
             IsLoading = true;
@@ -313,6 +307,8 @@ namespace RSG
         /// </summary>
         private IEnumerator LoadAsyncCoroutine(string sceneName, Action doneCallback)
         {
+            ExceptionIfLoading(sceneName);
+
             StartLoading(sceneName, "async");
 
             yield return Application.LoadLevelAsync(sceneName);
