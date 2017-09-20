@@ -1,4 +1,4 @@
-﻿using RSG.Utils;
+using RSG.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -416,14 +416,14 @@ namespace RSG
         /// <summary>
         /// Helper function to initalize the factory.
         /// </summary>
-        private static SingletonManager InitFactory(RSG.Utils.ILogger logger, Factory factory, IReflection reflection)
+        private static SingletonManager InitFactory(Utils.ILogger logger, Factory factory, IReflection reflection)
         {           
             //todo: all this code should merge into RSG.Factory.
             factory.AutoRegisterTypes();
 
-            var singletonManager = new SingletonManager(reflection, logger, factory);
+            var singletonManager = new SingletonManager(logger, factory);
 
-            factory.Dep<IReflection>(reflection);
+            factory.Dep(reflection);
             factory.AddDependencyProvider(singletonManager);
 
             var singletonScanner = new SingletonScanner(reflection, logger, singletonManager);

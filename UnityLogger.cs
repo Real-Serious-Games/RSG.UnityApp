@@ -1,4 +1,4 @@
-﻿using RSG.Utils;
+using RSG.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ namespace RSG
     /// <summary>
     /// A logger implementation that logs to the Unity log.
     /// </summary>
-    public class UnityLogger : ILogger
+    public class UnityLogger : Utils.ILogger
     {
         public void LogError(Exception ex, string message, params object[] args)
         {

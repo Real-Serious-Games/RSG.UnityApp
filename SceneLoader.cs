@@ -2,6 +2,7 @@ using RSG.Utils;
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace RSG
 {
@@ -106,7 +107,7 @@ namespace RSG
             {
                 if (SceneLoaded != null)
                 {
-                    SceneLoaded(this, new SceneLoadEventArgs(Application.loadedLevelName));
+                    SceneLoaded(this, new SceneLoadEventArgs(SceneManager.GetActiveScene().name));
                 }
             }
         }
@@ -119,7 +120,7 @@ namespace RSG
         private Promise sceneCompletedPromise;
 
         [Dependency]
-        public ILogger Logger { get; set; }
+        public Utils.ILogger Logger { get; set; }
 
         /// <summary>
         /// The name of the level currently scene.
@@ -128,7 +129,7 @@ namespace RSG
         {
             get
             {
-                return Application.loadedLevelName;
+                return SceneManager.GetActiveScene().name;
             }
         }
 
@@ -155,7 +156,7 @@ namespace RSG
 
             RaiseSceneLoadingEvent(sceneName);
 
-            Application.LoadLevel(sceneName);
+            SceneManager.LoadScene(sceneName);
         }
 
         /// <summary>
@@ -311,7 +312,7 @@ namespace RSG
 
             StartLoading(sceneName, "async");
 
-            yield return Application.LoadLevelAsync(sceneName);
+            yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
 
             DoneLoading(doneCallback);
         }
@@ -323,7 +324,7 @@ namespace RSG
         {
             StartLoading(sceneName, "async additive");
 
-            yield return Application.LoadLevelAdditiveAsync(sceneName);
+            yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
             DoneLoading(doneCallback);
         }

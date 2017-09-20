@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using RSG.Utils;
 using System;
 using System.Collections.Generic;
@@ -40,7 +40,7 @@ namespace RSG
         /// </summary>
         private string settingsFilePath;
 
-        private ILogger logger;
+        private Utils.ILogger logger;
 
         /// <summary>
         /// Used for delegating actions to the main thread as it is very difficult to play with the Unity API on a worker thread.
@@ -61,7 +61,7 @@ namespace RSG
         /// </summary>
         public event EventHandler<EventArgs> SettingsChanged;
 
-        public Settings(string settingsFilePath, ILogger logger, IDispatcher dispatcher)
+        public Settings(string settingsFilePath, Utils.ILogger logger, IDispatcher dispatcher)
         {
             Argument.StringNotNullOrEmpty(() => settingsFilePath);
             Argument.NotNull(() => logger);
@@ -169,7 +169,7 @@ namespace RSG
     public class SettingsLoader : ISettingsLoader
     {
         [Dependency]
-        public ILogger Logger { get; set; }
+        public Utils.ILogger Logger { get; set; }
 
         [Dependency]
         public IDispatcher Dispatcher { get; set; }

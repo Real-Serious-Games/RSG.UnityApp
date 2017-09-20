@@ -1,4 +1,4 @@
-﻿using RSG.Utils;
+using RSG.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace RSG
         public IPromiseTimer PromiseTimer { get; set;  }
 
         [Dependency]
-        public ILogger Logger { get; set; }
+        public Utils.ILogger Logger { get; set; }
 
         /// <summary>
         /// Set to true once shutdown.
