@@ -103,12 +103,24 @@ namespace RSG
             // Called when new level is loaded.
             // https://docs.unity3d.com/Documentation/ScriptReference/MonoBehaviour.OnLevelWasLoaded.html
             //
-            protected void OnLevelWasLoaded(int level)
+            private void Awake()
             {
-                if (SceneLoaded != null)
+                SceneManager.sceneLoaded += SceneManager_sceneLoaded;
+            }
+
+            private void SceneManager_sceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
+            {
+                if (SceneLoaded == null)
                 {
-                    SceneLoaded(this, new SceneLoadEventArgs(SceneManager.GetActiveScene().name));
+                    return;
                 }
+
+                SceneLoaded(this, new SceneLoadEventArgs(scene.name));
+            }
+
+            private void OnDestroy()
+            {
+                SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
             }
         }
 
