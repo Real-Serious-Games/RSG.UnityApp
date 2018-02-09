@@ -295,7 +295,7 @@ namespace RSG
             CreateSceneUnloadedEventHandler();
 
             var promise = new Promise();
-            sceneUnloadedEventHandler.StartCoroutine(LoadAsyncCoroutine(sceneName, () => promise.Resolve()));
+            sceneUnloadedEventHandler.StartCoroutine(UnloadAsyncCoroutine(sceneName, () => promise.Resolve()));
             return promise;
         }
 
@@ -339,13 +339,13 @@ namespace RSG
         }
 
         /// <summary>
-        /// Create the GameObject/Component that gets the callback when a scene is loaded.
+        /// Create the GameObject/Component that gets the callback when a scene is unloaded.
         /// </summary>
         private void CreateSceneUnloadedEventHandler()
         {
             if (sceneUnloadedEventHandler == null)
             {
-                sceneUnloadedEventHandler = new GameObject("_SceneUnoadedEventHandler").AddComponent<SceneUnloadedEventHandler>();
+                sceneUnloadedEventHandler = new GameObject("_SceneUnloadedEventHandler").AddComponent<SceneUnloadedEventHandler>();
                 GameObject.DontDestroyOnLoad(sceneUnloadedEventHandler.gameObject);
 
                 sceneUnloadedEventHandler.SceneUnloaded += sceneUnloadedEventHandler_SceneUnloaded;
@@ -472,9 +472,26 @@ namespace RSG
         /// </summary>
         private void ExceptionIfUnloading(string sceneName)
         {
+            var sceneExists = false;
+
+            for (var i = 0; i < SceneManager.sceneCount; i++) {
+                var scene = SceneManager.GetSceneAt(i);
+
+                if (scene.name == sceneName)
+                {
+                    sceneExists = true;
+                    break;
+                }
+            };
+
+            if (!sceneExists)
+            {
+                throw new ApplicationException("Requested unload of scene: " + sceneName + ", but scene isn't loaded");
+            }
+
             if (IsUnloading)
             {
-                throw new ApplicationException("Requested load of scene: " + sceneName + ", but already loading: " + LoadingSceneName);
+                throw new ApplicationException("Requested unload of scene: " + sceneName + ", but already unloading: " + LoadingSceneName);
             }
         }
 
@@ -493,7 +510,7 @@ namespace RSG
         }
 
         /// <summary>
-        /// Called when async loading has completed.
+        /// Called when async unloading has completed.
         /// </summary>
         private void DoneUnloading(Action doneCallback)
         {
