@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace RSG
 {
@@ -65,21 +65,21 @@ namespace RSG
         /// <summary>
         /// Event raised when a new scene has started async loading.
         /// </summary>
-        event EventHandler<SceneLoadEventArgs> SceneLoading;
+        event EventHandler<SceneEventArgs> SceneLoading;
 
         /// <summary>
         /// Event raised when a new scene is loaded.
         /// </summary>
-        event EventHandler<SceneLoadEventArgs> SceneLoaded;
+        event EventHandler<SceneEventArgs> SceneLoaded;
 
         /// <summary>
         /// Event raised when a new scene has started async loading.
         /// </summary>
-        event EventHandler<SceneUnloadEventArgs> SceneUnloading;
+        event EventHandler<SceneEventArgs> SceneUnloading;
 
         /// <summary>
         /// Event raised when a new scene is loaded.
         /// </summary>
-        event EventHandler<SceneUnloadEventArgs> SceneUnloaded;
+        event EventHandler<SceneEventArgs> SceneUnloaded;
     }
 }
