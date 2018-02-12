@@ -74,6 +74,9 @@
     <Compile Include="FactoryLogger.cs" />
     <Compile Include="LogConfig.cs" />
     <Compile Include="LogEnricherAttribute.cs" />
+    <Compile Include="SceneLoader\ISceneLoader.cs" />
+    <Compile Include="SceneLoader\SceneLoadEventArgs.cs" />
+    <Compile Include="SceneLoader\SceneUnloadEventArgs.cs" />
     <Compile Include="SettingsLoader.cs" />
     <Compile Include="FormattedException.cs" />
     <Compile Include="GameObjectCreator.cs" />
@@ -82,7 +85,7 @@
     <Compile Include="MultiLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RSGLogEnricher.cs" />
-    <Compile Include="SceneLoader.cs" />
+    <Compile Include="SceneLoader\SceneLoader.cs" />
     <Compile Include="SerilogHttpSink.cs" />
     <Compile Include="SerilogLogger.cs" />
     <Compile Include="SerilogSinkAttribute.cs" />
