@@ -411,6 +411,7 @@ namespace RSG
         {
             var sceneExists = false;
 
+            // Check if scene is loaded before attempting to unload
             for (var i = 0; i < SceneManager.sceneCount; i++)
             {
                 var scene = SceneManager.GetSceneAt(i);
