@@ -33,6 +33,11 @@ namespace RSG
         string UnloadingSceneName { get; }
 
         /// <summary>
+        /// Check if a scene is loaded.
+        /// </summary>
+        bool SceneExists(string sceneName);
+
+        /// <summary>
         /// Load a scene synchronously.
         /// </summary>
         void Load(string sceneName);
