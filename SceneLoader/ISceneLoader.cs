@@ -35,7 +35,7 @@ namespace RSG
         /// <summary>
         /// Check if a scene is loaded.
         /// </summary>
-        bool SceneExists(string sceneName);
+        bool IsSceneLoaded(string sceneName);
 
         /// <summary>
         /// Load a scene synchronously.

@@ -365,7 +365,7 @@ namespace RSG
         /// </summary>
         private IEnumerator UnloadAsyncCoroutine(string sceneName, Promise result)
         {
-            if (SceneExists(sceneName))
+            if (!IsSceneLoaded(sceneName))
             {
                 DoneUnloading(() => result.Reject(new SceneLoaderException(
                     "Requested unload of scene: " + sceneName + ", but scene isn't loaded")));
@@ -388,7 +388,7 @@ namespace RSG
         /// <summary>
         /// Check if scene is loaded
         /// </summary>
-        public bool SceneExists(string sceneName)
+        public bool IsSceneLoaded(string sceneName)
         {
             for (var i = 0; i < SceneManager.sceneCount; i++)
             {
