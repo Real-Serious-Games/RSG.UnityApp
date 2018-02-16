@@ -37,8 +37,8 @@
     <Reference Include="RSG.Metrics, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\RSG.Metrics.1.1.0\lib\net35\RSG.Metrics.dll</HintPath>
     </Reference>
-    <Reference Include="RSG.Promise, Version=1.2.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\RSG.Promise.1.2.2.0\lib\net35\RSG.Promise.dll</HintPath>
+    <Reference Include="RSG.Promise, Version=3.0.0.0, Culture=neutral, PublicKeyToken=7019fe0722eef3a4, processorArchitecture=MSIL">
+      <HintPath>packages\RSG.Promise.3.0.0\lib\net35\RSG.Promise.dll</HintPath>
     </Reference>
     <Reference Include="RSG.SceneQuery, Version=1.0.9.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\RSG.SceneQuery.1.0.9\lib\net35\RSG.SceneQuery.dll</HintPath>
