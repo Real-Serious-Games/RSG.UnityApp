@@ -1,6 +1,8 @@
 using RSG.Utils;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -31,40 +33,6 @@ namespace RSG
         
         private class SceneEventHandler: MonoBehaviour
         {
-            public event EventHandler<SceneEventArgs> SceneUnloaded;
-            public event EventHandler<SceneEventArgs> SceneLoaded;
-
-            private void Awake()
-            {
-                SceneManager.sceneUnloaded += SceneManager_sceneUnloaded;
-                SceneManager.sceneLoaded += SceneManager_sceneLoaded;
-            }
-
-            private void SceneManager_sceneUnloaded(UnityEngine.SceneManagement.Scene scene)
-            {
-                if (SceneUnloaded == null)
-                {
-                    return;
-                }
-
-                SceneUnloaded(this, new SceneEventArgs(scene.name));
-            }
-
-            private void SceneManager_sceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
-            {
-                if (SceneLoaded == null)
-                {
-                    return;
-                }
-
-                SceneLoaded(this, new SceneEventArgs(scene.name));
-            }
-
-            private void OnDestroy()
-            {
-                SceneManager.sceneUnloaded -= SceneManager_sceneUnloaded;
-                SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
-            }
         }
 
         private SceneEventHandler sceneLoadedEventHandler;
@@ -138,6 +106,22 @@ namespace RSG
         }
 
         /// <summary>
+        /// Load multiple scenes asynchronously.
+        /// </summary>
+        public IPromise LoadAsync(IEnumerable<string> sceneNames)
+        {
+            Argument.NotNull(() => sceneNames);
+
+            CreateSceneLoadedEventHandler();
+
+            var promise = new Promise();
+            sceneLoadedEventHandler.StartCoroutine(
+                LoadMultipleAsyncAdditiveCoroutine(sceneNames, () => promise.Resolve())
+            );
+            return promise;
+        }
+
+        /// <summary>
         /// Load a scene asynchronously and merge it to the current scene.
         /// </summary>
         public IPromise LoadAsyncAdditive(string sceneName)
@@ -147,7 +131,9 @@ namespace RSG
             CreateSceneLoadedEventHandler();
 
             var promise = new Promise();
-            sceneLoadedEventHandler.StartCoroutine(LoadAsyncAdditiveCoroutine(sceneName, () => promise.Resolve()));
+            sceneLoadedEventHandler.StartCoroutine(
+                LoadAsyncAdditiveCoroutine(sceneName, () => promise.Resolve())
+            );
             return promise;
         }
 
@@ -204,8 +190,6 @@ namespace RSG
 
             sceneLoadedEventHandler = new GameObject("_SceneLoadedEventHandler").AddComponent<SceneEventHandler>();
             GameObject.DontDestroyOnLoad(sceneLoadedEventHandler.gameObject);
-
-            sceneLoadedEventHandler.SceneLoaded += sceneLoadedEventHandler_SceneLoaded;
         }
 
         /// <summary>
@@ -220,8 +204,6 @@ namespace RSG
 
             sceneUnloadedEventHandler = new GameObject("_SceneUnloadedEventHandler").AddComponent<SceneEventHandler>();
             GameObject.DontDestroyOnLoad(sceneUnloadedEventHandler.gameObject);
-
-            sceneUnloadedEventHandler.SceneUnloaded += sceneUnloadedEventHandler_SceneUnloaded;
         }
 
         /// <summary>
@@ -234,9 +216,6 @@ namespace RSG
         /// </summary>
         public event EventHandler<SceneEventArgs> SceneLoaded;
 
-        private void sceneLoadedEventHandler_SceneLoaded(object sender, SceneEventArgs e) => 
-            NotifySceneLoaded(e.SceneName);
-
         /// <summary>
         /// Event raised when a new scene has started async unloaded.
         /// </summary>
@@ -247,27 +226,30 @@ namespace RSG
         /// </summary>
         public event EventHandler<SceneEventArgs> SceneUnloaded;
 
-        private void sceneUnloadedEventHandler_SceneUnloaded(object sender, SceneEventArgs e) =>
-            NotifySceneUnloaded(e.SceneName);
-
         /// <summary>
         /// Called when a new scene is loaded.
         /// </summary>
-        private void NotifySceneLoaded(string sceneName)
+        private void NotifySceneLoaded(string[] sceneNames)
         {
-            Logger.LogInfo("Scene Loaded: " + sceneName);
+            foreach (var sceneName in sceneNames)
+            {
+                Logger.LogInfo("Scene Loaded: " + sceneName);
+            }
 
-            SceneLoaded?.Invoke(this, new SceneEventArgs(sceneName));
+            SceneLoaded?.Invoke(this, new SceneEventArgs(sceneNames));
         }
 
         /// <summary>
         /// Called when a new scene is unloaded.
         /// </summary>
-        private void NotifySceneUnloaded(string sceneName)
+        private void NotifySceneUnloaded(string[] sceneNames)
         {
-            Logger.LogInfo("Scene Unloaded: " + sceneName);
+            foreach (var sceneName in sceneNames)
+            {
+                Logger.LogInfo("Scene Unloaded: " + sceneName);
+            }
 
-            SceneUnloaded?.Invoke(this, new SceneEventArgs(sceneName));
+            SceneUnloaded?.Invoke(this, new SceneEventArgs(sceneNames));
         }
 
         /// <summary>
@@ -279,8 +261,6 @@ namespace RSG
 
             IsLoading = true;
             LoadingSceneName = sceneName;
-
-            RaiseSceneLoadingEvent(sceneName);
         }
 
         /// <summary>
@@ -300,6 +280,12 @@ namespace RSG
         /// Raises the scene loading event.
         /// </summary>
         private void RaiseSceneLoadingEvent(string sceneName) =>
+            SceneLoading?.Invoke(this, new SceneEventArgs(sceneName));
+
+        /// <summary>
+        /// Raises the scene loading event.
+        /// </summary>
+        private void RaiseSceneLoadingEvent(string[] sceneName) =>
             SceneLoading?.Invoke(this, new SceneEventArgs(sceneName));
 
         /// <summary>
@@ -333,19 +319,24 @@ namespace RSG
         /// <summary>
         /// Coroutine to do an async load.
         /// </summary>
-        private IEnumerator LoadAsyncCoroutine(string sceneName, Promise result)
+        private IEnumerator LoadAsyncCoroutine(string sceneName, IPendingPromise result)
         {
             if (IsLoading)
             {
                 DoneLoading(() => result.Reject(new SceneLoaderException(
-                    "Requested load of scene: " + sceneName + ", but already loading: " + LoadingSceneName)));
+                    "Requested load of scene: " + sceneName + ", but already loading: " + LoadingSceneName
+                )));
             }
+
+            RaiseSceneLoadingEvent(sceneName);
 
             StartLoading(sceneName, "async");
 
             yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
 
-            DoneLoading(() => result.Resolve());
+            NotifySceneLoaded(new [] { sceneName });
+
+            DoneLoading(result.Resolve);
         }
 
         /// <summary>
@@ -353,12 +344,37 @@ namespace RSG
         /// </summary>
         private IEnumerator LoadAsyncAdditiveCoroutine(string sceneName, Action doneCallback)
         {
+            RaiseSceneLoadingEvent(sceneName);
+
             StartLoading(sceneName, "async additive");
 
             yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
+            NotifySceneLoaded(new [] { sceneName });
+
             DoneLoading(doneCallback);
         }
+
+        /// <summary>
+        /// Coroutine to do an async additive load.
+        /// </summary>
+        private IEnumerator LoadMultipleAsyncAdditiveCoroutine(IEnumerable<string> scenes, Action doneCallback)
+        {
+            var scenesArray = scenes as string[] ?? scenes.ToArray();
+            RaiseSceneLoadingEvent(scenesArray);
+
+            foreach (var sceneName in scenesArray)
+            {
+                StartLoading(sceneName, "async additive");
+
+                yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+            }
+
+            NotifySceneLoaded(scenesArray);
+
+            DoneLoading(doneCallback);
+        }
+
 
         /// <summary>
         /// Coroutine to do an async unload.
@@ -368,12 +384,14 @@ namespace RSG
             if (!IsSceneLoaded(sceneName))
             {
                 DoneUnloading(() => result.Reject(new SceneLoaderException(
-                    "Requested unload of scene: " + sceneName + ", but scene isn't loaded")));
+                    "Requested unload of scene: " + sceneName + ", but scene isn't loaded"
+                )));
             }
             else if (IsUnloading)
             {
                 DoneUnloading(() => result.Reject(new SceneLoaderException(
-                    "Requested unload of scene: " + sceneName + ", but already unloading: " + LoadingSceneName)));
+                    "Requested unload of scene: " + sceneName + ", but already unloading: " + LoadingSceneName
+                )));
             }
             else
             {
@@ -381,7 +399,9 @@ namespace RSG
 
                 yield return SceneManager.UnloadSceneAsync(sceneName);
 
-                DoneUnloading(() => result.Resolve());
+                NotifySceneUnloaded(new[] { sceneName });
+
+                DoneUnloading(result.Resolve);
             }
         }
 
@@ -398,7 +418,7 @@ namespace RSG
                 {
                     return true;
                 }
-            };
+            }
 
             return false;
         }

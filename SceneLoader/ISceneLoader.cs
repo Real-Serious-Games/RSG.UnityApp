@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace RSG
 {
@@ -46,6 +47,11 @@ namespace RSG
         /// Load a scene asynchronously.
         /// </summary>
         IPromise LoadAsync(string sceneName);
+
+        /// <summary>
+        /// Load multiple scenes asynchronously.
+        /// </summary>
+        IPromise LoadAsync(IEnumerable<string> sceneName);
 
         /// <summary>
         /// Load a scene asynchronously.
