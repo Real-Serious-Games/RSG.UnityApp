@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -97,10 +97,10 @@ namespace RSG
         /// <summary>
         /// Objects that need to be updated.
         /// </summary>
-        private List<IUpdatable> updatables = new List<IUpdatable>();
-        private List<ILateUpdatable> lateUpdatables = new List<ILateUpdatable>();
-        private List<IEndOfFrameUpdatable> endOfFrameUpdatables = new List<IEndOfFrameUpdatable>();
-        private List<IRenderable> renderables = new List<IRenderable>();
+        private readonly List<IUpdatable> updatables = new List<IUpdatable>();
+        private readonly List<ILateUpdatable> lateUpdatables = new List<ILateUpdatable>();
+        private readonly List<IEndOfFrameUpdatable> endOfFrameUpdatables = new List<IEndOfFrameUpdatable>();
+        private readonly List<IRenderable> renderables = new List<IRenderable>();
 
         /// <summary>
         /// Register an updatable object.
